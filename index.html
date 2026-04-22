@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuickBI 客户增购推荐工具</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f1117;--surface:#1a1d2e;--card:#222640;--border:#2d3154;
+  --text:#e4e4e7;--muted:#9ca3af;--accent:#4f8ff7;
+  --plan-a:#7C3AED;--plan-b:#0096FF;--plan-c:#00B374;
+  --red:#ef4444;--orange:#f59e0b;--green:#22c55e;
+}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden}
+a{color:var(--accent);text-decoration:none}
+
+/* Layout */
+.app{display:flex;height:100vh}
+.sidebar{width:340px;min-width:340px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.main{flex:1;overflow-y:auto;padding:24px 32px}
+
+/* Sidebar Header */
+.sidebar-header{padding:20px 16px 12px;border-bottom:1px solid var(--border)}
+.sidebar-header h1{font-size:15px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.sidebar-header .sub{font-size:11px;color:var(--muted)}
+.search-box{margin-top:12px;position:relative}
+.search-box input{width:100%;padding:10px 12px 10px 36px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none;transition:border .2s}
+.search-box input:focus{border-color:var(--accent)}
+.search-box .icon{position:absolute;left:11px;top:11px;color:var(--muted);font-size:14px}
+
+/* Filters */
+.filters{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:6px}
+.filter-btn{padding:4px 10px;font-size:11px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.filter-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(79,143,247,.1)}
+.filter-btn.plan-a.active{border-color:var(--plan-a);color:var(--plan-a);background:rgba(124,58,237,.1)}
+.filter-btn.plan-b.active{border-color:var(--plan-b);color:var(--plan-b);background:rgba(0,150,255,.1)}
+.filter-btn.plan-c.active{border-color:var(--plan-c);color:var(--plan-c);background:rgba(0,179,116,.1)}
+
+/* Customer List */
+.customer-list{flex:1;overflow-y:auto;padding:8px}
+.customer-item{padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .15s;margin-bottom:2px;display:flex;align-items:center;gap:10px}
+.customer-item:hover{background:var(--card)}
+.customer-item.selected{background:var(--card);border-left:3px solid var(--accent)}
+.customer-item .plan-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.customer-item .plan-dot.A{background:var(--plan-a)}
+.customer-item .plan-dot.B{background:var(--plan-b)}
+.customer-item .plan-dot.C{background:var(--plan-c)}
+.customer-item .info{flex:1;min-width:0}
+.customer-item .name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.customer-item .meta{font-size:10px;color:var(--muted);margin-top:2px;display:flex;gap:8px}
+.customer-item .tag{font-size:9px;padding:1px 6px;border-radius:10px;flex-shrink:0;font-weight:600}
+.tag-A{background:rgba(124,58,237,.15);color:var(--plan-a)}
+.tag-B{background:rgba(0,150,255,.15);color:var(--plan-b)}
+.tag-C{background:rgba(0,179,116,.15);color:var(--plan-c)}
+.list-count{padding:8px 16px;font-size:11px;color:var(--muted);border-bottom:1px solid var(--border)}
+
+/* Main: Empty State */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--muted)}
+.empty-state .icon{font-size:48px;margin-bottom:16px;opacity:.3}
+.empty-state p{font-size:14px}
+
+/* Main: Customer Detail */
+.detail{max-width:900px}
+.profile-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+.profile-header .plan-badge{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.plan-badge-A{background:var(--plan-a)}
+.plan-badge-B{background:var(--plan-b)}
+.plan-badge-C{background:var(--plan-c)}
+.profile-header .title{flex:1}
+.profile-header .title h2{font-size:20px;font-weight:700;margin-bottom:4px}
+.profile-header .title .sub-info{font-size:12px;color:var(--muted)}
+
+/* Metric Pills */
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.pill{padding:8px 14px;background:var(--card);border-radius:8px;border:1px solid var(--border);font-size:12px}
+.pill .label{color:var(--muted);font-size:10px;margin-bottom:2px}
+.pill .value{font-weight:600}
+.pill .value.green{color:var(--green)}
+.pill .value.red{color:var(--red)}
+.pill .value.orange{color:var(--orange)}
+
+/* Sections */
+.section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.section h3{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section h3 .dot{width:10px;height:10px;border-radius:50%}
+
+/* Score Bars */
+.score-row{display:flex;align-items:center;margin-bottom:8px}
+.score-label{width:80px;font-size:11px;color:var(--muted)}
+.score-bar-wrap{flex:1;height:18px;background:var(--card);border-radius:9px;overflow:hidden;margin:0 10px}
+.score-bar{height:100%;border-radius:9px;transition:width .5s ease}
+.score-val{width:36px;font-size:12px;font-weight:600;text-align:right}
+
+/* Module PV */
+.mod-row{display:flex;align-items:center;margin-bottom:6px}
+.mod-name{width:72px;font-size:11px;color:var(--muted);text-align:right;padding-right:10px}
+.mod-bar-wrap{flex:1;height:20px;background:var(--card);border-radius:4px;overflow:hidden;position:relative}
+.mod-bar{height:100%;border-radius:4px;transition:width .5s ease;min-width:2px}
+.mod-val{width:70px;font-size:11px;text-align:right;padding-left:8px;color:var(--muted)}
+
+/* Plan Recommendation */
+.plan-card{border-left:4px solid var(--accent);padding-left:16px}
+.plan-card.A{border-color:var(--plan-a)}
+.plan-card.B{border-color:var(--plan-b)}
+.plan-card.C{border-color:var(--plan-c)}
+.plan-reason{font-size:13px;line-height:1.7;margin-bottom:16px;color:var(--text)}
+.talking-points{list-style:none;counter-reset:tp}
+.talking-points li{counter-increment:tp;padding:10px 12px;margin-bottom:6px;background:var(--card);border-radius:8px;font-size:12px;line-height:1.7;position:relative;padding-left:36px}
+.talking-points li::before{content:counter(tp);position:absolute;left:10px;top:10px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.plan-card.A .talking-points li::before{background:var(--plan-a)}
+.plan-card.B .talking-points li::before{background:var(--plan-b)}
+.plan-card.C .talking-points li::before{background:var(--plan-c)}
+
+/* Copy Button */
+.copy-btn{padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600;transition:opacity .2s;margin-top:8px}
+.copy-btn:hover{opacity:.85}
+.copy-btn.copied{background:var(--green)}
+
+/* XiaoQ Status */
+.xq-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.xq-item{padding:10px;background:var(--card);border-radius:8px}
+.xq-item .lbl{font-size:10px;color:var(--muted);margin-bottom:4px}
+.xq-item .val{font-size:13px;font-weight:600}
+
+/* Financial */
+.fin-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;font-size:12px}
+.fin-label{width:100px;color:var(--muted)}
+.fin-value{font-weight:600;flex:1}
+.fin-gap{font-size:11px;color:var(--muted)}
+
+/* Responsive */
+@media(max-width:768px){
+  .sidebar{width:100%;min-width:unset;max-height:50vh}
+  .app{flex-direction:column}
+  .main{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- App -->
+<div class="app" id="app">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h1>QuickBI 客户增购推荐</h1>
+      <div class="sub">输入客户名 → 查看使用数据 → 获取推荐方案</div>
+      <div class="search-box">
+        <span class="icon">&#128269;</span>
+        <input type="text" id="searchInput" placeholder="搜索客户名称...">
+      </div>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="list-count" id="listCount"></div>
+    <div class="customer-list" id="customerList"></div>
+  </div>
+  <!-- Main -->
+  <div class="main" id="mainPanel">
+    <div class="empty-state" id="emptyState">
+      <div class="icon">&#128202;</div>
+      <p>从左侧搜索或选择一个客户查看详情</p>
+    </div>
+    <div class="detail" id="detail" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+// Init - load data on page load
+loadData();
+
+// Data
+let allData=null, allCustomers=[], selected=null, activeFilters={plan:null,priority:null,health:null};
+
+async function loadData(){
+  try{
+    const r=await fetch('./data/customers.json');
+    allData=await r.json();
+    allCustomers=Object.values(allData.customers).sort((a,b)=>(b.scores?.composite||0)-(a.scores?.composite||0));
+    buildFilters();
+    renderList();
+  }catch(e){
+    document.getElementById('mainPanel').innerHTML='<div class="empty-state"><p>数据加载失败，请确认 data/customers.json 存在</p></div>';
+  }
+}
+
+// Filters
+function buildFilters(){
+  const fc=document.getElementById('filters');
+  const plans=[{k:'A',l:'方案A',c:'plan-a'},{k:'B',l:'方案B',c:'plan-b'},{k:'C',l:'方案C',c:'plan-c'}];
+  const health=['健康','观测','高危'];
+  const priorities=['高优先级','中优先级','低优先级','观察'];
+  let html='';
+  plans.forEach(p=>{html+=`<button class="filter-btn ${p.c}" data-type="plan" data-val="${p.k}">${p.l}</button>`});
+  health.forEach(h=>{html+=`<button class="filter-btn" data-type="health" data-val="${h}">${h}</button>`});
+  priorities.forEach(p=>{html+=`<button class="filter-btn" data-type="priority" data-val="${p}">${p}</button>`});
+  fc.innerHTML=html;
+  fc.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const t=btn.dataset.type,v=btn.dataset.val;
+      if(activeFilters[t]===v){activeFilters[t]=null;btn.classList.remove('active')}
+      else{
+        fc.querySelectorAll(`[data-type="${t}"]`).forEach(b=>b.classList.remove('active'));
+        activeFilters[t]=v;btn.classList.add('active');
+      }
+      renderList();
+    });
+  });
+}
+
+// List
+function renderList(){
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  let filtered=allCustomers.filter(c=>{
+    if(q&&!c.name.toLowerCase().includes(q))return false;
+    if(activeFilters.plan&&c.plan!==activeFilters.plan)return false;
+    if(activeFilters.priority&&c.priority!==activeFilters.priority)return false;
+    if(activeFilters.health&&c.health!==activeFilters.health)return false;
+    return true;
+  });
+  document.getElementById('listCount').textContent=`${filtered.length} / ${allCustomers.length} 客户`;
+  const ul=document.getElementById('customerList');
+  ul.innerHTML=filtered.map(c=>`
+    <div class="customer-item ${selected===c.name?'selected':''}" data-name="${esc(c.name)}">
+      <div class="plan-dot ${c.plan}"></div>
+      <div class="info">
+        <div class="name">${esc(c.name)}</div>
+        <div class="meta"><span>${c.industry||''}</span><span>PV:${fmtN(c.monthlyPV)}</span><span>${c.health||''}</span></div>
+      </div>
+      <span class="tag tag-${c.plan}">${c.plan}</span>
+    </div>`).join('');
+  ul.querySelectorAll('.customer-item').forEach(el=>{
+    el.addEventListener('click',()=>selectCustomer(el.dataset.name));
+  });
+}
+document.getElementById('searchInput').addEventListener('input',renderList);
+
+function selectCustomer(name){
+  selected=name;
+  const c=allData.customers[name];
+  if(!c)return;
+  renderList();
+  renderDetail(c);
+}
+
+// Detail
+function renderDetail(c){
+  document.getElementById('emptyState').style.display='none';
+  const d=document.getElementById('detail');
+  d.style.display='block';
+  const planNames={A:'AI数字员工',B:'AI基础提效',C:'深度场景加速'};
+  const planColors={A:'var(--plan-a)',B:'var(--plan-b)',C:'var(--plan-c)'};
+  
+  // Health color
+  const hc=c.health==='健康'?'green':c.health==='高危'?'red':'orange';
+  
+  // Module PV bars
+  const mods=Object.entries(c.modulePV||{}).sort((a,b)=>b[1]-a[1]);
+  const maxPV=mods.length?mods[0][1]:1;
+  const modColors=['#4f8ff7','#7C3AED','#00B374','#f59e0b','#ef4444','#06b6d4','#ec4899','#84cc16'];
+  
+  // Score bars
+  const scores=[
+    {l:'使用深度',v:c.scores?.usageDepth||0},
+    {l:'增购空间',v:c.scores?.upsellSpace||0},
+    {l:'企业规模',v:c.scores?.enterpriseScale||0},
+    {l:'销售触达',v:c.scores?.salesReach||0},
+    {l:'综合得分',v:c.scores?.composite||0},
+  ];
+  
+  d.innerHTML=`
+    <!-- Header -->
+    <div class="profile-header">
+      <span class="plan-badge plan-badge-${c.plan}">方案${c.plan}: ${planNames[c.plan]}</span>
+      <div class="title">
+        <h2>${esc(c.name)}</h2>
+        <div class="sub-info">
+          ${c.industry?c.industry+' · ':''}${c.industryDetail||''}${c.revenueEstimate?' · '+c.revenueEstimate:''}
+          ${c.version?' · '+c.version:''}
+          ${c.department?' · '+c.department:''}
+        </div>
+      </div>
+    </div>
+
+    <!-- Pills -->
+    <div class="pills">
+      <div class="pill"><div class="label">健康度</div><div class="value ${hc}">${c.health||'暂无'}</div></div>
+      <div class="pill"><div class="label">活跃率</div><div class="value">${c.activeUserRate!=null?c.activeUserRate+'%':'暂无'}</div></div>
+      <div class="pill"><div class="label">月 PV</div><div class="value">${fmtN(c.monthlyPV)}</div></div>
+      <div class="pill"><div class="label">报表数</div><div class="value">${c.reportCount||0}</div></div>
+      <div class="pill"><div class="label">成员</div><div class="value">${c.orgMembers||0}</div></div>
+      <div class="pill"><div class="label">优先级</div><div class="value">${c.priority||'暂无'}</div></div>
+      <div class="pill"><div class="label">续约状态</div><div class="value">${c.renewalStatus||'暂无'}</div></div>
+      <div class="pill"><div class="label">客户分层</div><div class="value">${c.customerTier||''}${c.customerSegment?' / '+c.customerSegment:''}</div></div>
+    </div>
+
+    <!-- Plan Recommendation -->
+    <div class="section">
+      <h3><span class="dot" style="background:${planColors[c.plan]}"></span>推荐方案：方案${c.plan} — ${planNames[c.plan]}</h3>
+      <div class="plan-card ${c.plan}">
+        <div class="plan-reason">${esc(c.planReason||'')}</div>
+        <h4 style="font-size:13px;margin-bottom:10px;color:var(--muted)">沟通要点</h4>
+        <ol class="talking-points">
+          ${(c.talkingPoints||[]).map(t=>`<li>${esc(t)}</li>`).join('')}
+        </ol>
+        <button class="copy-btn" onclick="copyPoints(this)">复制沟通要点</button>
+      </div>
+    </div>
+
+    <!-- Module PV -->
+    ${mods.length?`
+    <div class="section">
+      <h3>模块使用分布 <span style="font-size:11px;color:var(--muted);font-weight:400">(${c.moduleCount}个模块活跃)</span></h3>
+      ${mods.map((m,i)=>`
+        <div class="mod-row">
+          <div class="mod-name">${m[0]}</div>
+          <div class="mod-bar-wrap"><div class="mod-bar" style="width:${Math.max(m[1]/maxPV*100,1)}%;background:${modColors[i%modColors.length]}"></div></div>
+          <div class="mod-val">${fmtN(m[1])}</div>
+        </div>`).join('')}
+    </div>`:''}
+
+    <!-- Scores -->
+    <div class="section">
+      <h3>综合评分</h3>
+      ${scores.map(s=>{
+        const color=s.v>=70?'var(--green)':s.v>=40?'var(--orange)':'var(--red)';
+        return `<div class="score-row">
+          <div class="score-label">${s.l}</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:${s.v}%;background:${color}"></div></div>
+          <div class="score-val">${s.v}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <!-- 小Q -->
+    <div class="section">
+      <h3><span class="dot" style="background:var(--plan-a)"></span>智能小Q 状态</h3>
+      <div class="xq-grid">
+        <div class="xq-item"><div class="lbl">采购状态</div><div class="val" style="color:${c.xiaoQ?.purchased?'var(--green)':'var(--muted)'}">${c.xiaoQ?.purchased?'已采购':'未采购'}</div></div>
+        <div class="xq-item"><div class="lbl">试用状态</div><div class="val" style="color:${c.xiaoQ?.trial?'var(--orange)':'var(--muted)'}">${c.xiaoQ?.trial?'有试用':'未试用'}</div></div>
+        <div class="xq-item"><div class="lbl">采购详情</div><div class="val">${c.xiaoQ?.purchaseDetail||'—'}</div></div>
+        <div class="xq-item"><div class="lbl">试用月数</div><div class="val">${c.xiaoQ?.trialMonths?c.xiaoQ.trialMonths+'个月':'—'}</div></div>
+        <div class="xq-item"><div class="lbl">日均Token</div><div class="val">${c.xiaoQ?.dailyTokens?fmtN(c.xiaoQ.dailyTokens):'—'}</div></div>
+        <div class="xq-item"><div class="lbl">累计Token</div><div class="val">${c.xiaoQ?.totalTokens?fmtN(c.xiaoQ.totalTokens):'—'}</div></div>
+      </div>
+    </div>
+
+    <!-- Financial -->
+    <div class="section">
+      <h3>财务信息</h3>
+      <div class="fin-row"><div class="fin-label">续费金额</div><div class="fin-value">${c.renewalAmount!=null?'¥'+fmtN(c.renewalAmount):'暂无'}</div></div>
+      <div class="fin-row"><div class="fin-label">行业最高</div><div class="fin-value">${c.industryMax!=null?'¥'+fmtN(c.industryMax):'暂无'}</div><div class="fin-gap">${c.gapToMax!=null?'差距: '+fmtN(c.gapToMax):''}</div></div>
+      <div class="fin-row"><div class="fin-label">行业均值</div><div class="fin-value">${c.industryAvg!=null?'¥'+fmtN(c.industryAvg):'暂无'}</div><div class="fin-gap">${c.gapToAvg!=null?'差距: '+fmtN(c.gapToAvg):''}</div></div>
+      ${c.expiryDate?`<div class="fin-row"><div class="fin-label">到期日期</div><div class="fin-value">${c.expiryDate}</div></div>`:''}
+    </div>
+
+    <!-- Priority Reason -->
+    ${c.priorityReason?`
+    <div class="section">
+      <h3>增购建议理由</h3>
+      <p style="font-size:12px;line-height:1.8;color:var(--muted)">${esc(c.priorityReason)}</p>
+    </div>`:''}
+  `;
+  d.scrollTop=0;
+  document.getElementById('mainPanel').scrollTop=0;
+}
+
+// Helpers
+function esc(s){if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function fmtN(n){
+  if(n==null||n===undefined)return'0';
+  n=Number(n);
+  if(isNaN(n))return'0';
+  if(Math.abs(n)>=100000000)return(n/100000000).toFixed(1)+'亿';
+  if(Math.abs(n)>=10000)return(n/10000).toFixed(1)+'万';
+  return n.toLocaleString('zh-CN',{maximumFractionDigits:0});
+}
+
+function copyPoints(btn){
+  const c=allData.customers[selected];
+  if(!c)return;
+  const planNames={A:'AI数字员工',B:'AI基础提效',C:'深度场景加速'};
+  let text=`【${c.name}】推荐方案${c.plan}: ${planNames[c.plan]}\n\n`;
+  text+=`推荐理由: ${c.planReason}\n\n沟通要点:\n`;
+  (c.talkingPoints||[]).forEach((t,i)=>{text+=`${i+1}. ${t}\n\n`});
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='已复制!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='复制沟通要点';btn.classList.remove('copied')},2000);
+  });
+}
+</script>
+</body>
+</html>

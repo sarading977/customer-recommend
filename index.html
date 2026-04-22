@@ -129,11 +129,111 @@ a{color:var(--accent);text-decoration:none}
 .fin-value{font-weight:600;flex:1}
 .fin-gap{font-size:11px;color:var(--muted)}
 
+/* Slide Deck */
+.slide-deck{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.slide-deck h3{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.slide-viewport{border:1px solid var(--border);border-radius:10px;overflow:hidden;position:relative;background:var(--card);min-height:300px}
+.slide-viewport .sl-accent-bar{height:4px;width:100%}
+.sl-inner{padding:24px}
+.sl-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px}
+.sl-subtitle{font-size:11px;color:var(--muted);margin-bottom:16px}
+.sl-grid{display:grid;gap:10px}
+.sl-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.sl-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.sl-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+.sl-grid.cols-5{grid-template-columns:repeat(5,1fr)}
+.sl-card-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;position:relative}
+.sl-card-item .sl-card-bar{height:3px;border-radius:3px 3px 0 0;margin:-12px -12px 10px -12px}
+.sl-card-item .sl-badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:9px;font-weight:700;color:#fff;margin-bottom:6px}
+.sl-card-item .sl-card-title{font-size:12px;font-weight:700;margin-bottom:4px}
+.sl-card-item .sl-card-desc{font-size:10px;color:var(--muted);line-height:1.6;white-space:pre-line}
+.sl-card-item .sl-card-result{margin-top:8px;padding:4px 8px;border-radius:6px;font-size:10px;font-weight:600;color:#fff;text-align:center}
+.sl-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:12px}
+.sl-table th{padding:8px 10px;color:#fff;font-weight:600;text-align:left}
+.sl-table td{padding:7px 10px;border-bottom:1px solid var(--border)}
+.sl-table tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.sl-callout{padding:10px 14px;border-radius:8px;color:#fff;font-size:12px;font-weight:600;line-height:1.6;margin-top:12px}
+.sl-callout .sl-callout-sub{font-weight:400;font-size:11px;opacity:.8;margin-top:2px}
+.sl-metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.sl-metric{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+.sl-metric .sl-metric-bar{height:3px;border-radius:3px 3px 0 0;margin:-10px -10px 8px -10px}
+.sl-metric .sl-metric-name{font-size:11px;font-weight:600;margin-bottom:6px}
+.sl-metric .sl-metric-vals{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px}
+.sl-metric .sl-bef{font-size:14px;font-weight:700;color:var(--red)}
+.sl-metric .sl-arr{font-size:10px;color:var(--muted)}
+.sl-metric .sl-aft{font-size:14px;font-weight:700;color:var(--green)}
+.sl-metric .sl-metric-tag{background:rgba(34,197,94,.1);color:var(--green);font-size:9px;padding:3px 8px;border-radius:6px;font-weight:600}
+.sl-vals-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sl-val-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px}
+.sl-val-card .sl-val-title{font-size:12px;font-weight:700;margin-bottom:4px}
+.sl-val-card .sl-val-sub{font-size:10px;font-weight:600;color:var(--text);margin-bottom:4px}
+.sl-val-card .sl-val-desc{font-size:9px;color:var(--muted);line-height:1.6;white-space:pre-line}
+.sl-ba{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.sl-ba-box{border-radius:8px;padding:12px}
+.sl-ba-box.before{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2)}
+.sl-ba-box.after{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2)}
+.sl-ba-box .sl-ba-title{font-size:12px;font-weight:700;margin-bottom:8px}
+.sl-ba-box .sl-ba-item{font-size:10px;color:var(--muted);margin-bottom:4px;line-height:1.5}
+.sl-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.sl-step{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+.sl-step .sl-step-num{font-size:16px;font-weight:800;margin-bottom:2px}
+.sl-step .sl-step-name{font-size:11px;font-weight:600;margin-bottom:4px}
+.sl-step .sl-step-desc{font-size:9px;color:var(--muted);line-height:1.5;white-space:pre-line}
+.sl-pkgs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.sl-pkg{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;position:relative}
+.sl-pkg.recommended{border-width:2px}
+.sl-pkg .sl-pkg-bar{height:3px;border-radius:3px 3px 0 0;margin:-12px -12px 10px -12px}
+.sl-pkg .sl-rec-badge{position:absolute;top:8px;right:8px;padding:2px 8px;border-radius:8px;font-size:9px;font-weight:700;color:#fff;background:var(--orange)}
+.sl-pkg .sl-pkg-name{font-size:13px;font-weight:700;margin-bottom:4px}
+.sl-pkg .sl-pkg-inc{font-size:10px;font-weight:600;margin-bottom:6px}
+.sl-pkg .sl-pkg-desc{font-size:9px;color:var(--muted);line-height:1.6;white-space:pre-line;margin-bottom:8px}
+.sl-pkg .sl-pkg-val{background:rgba(34,197,94,.1);color:var(--green);font-size:9px;padding:4px 8px;border-radius:6px;font-weight:600;text-align:center}
+.sl-cases{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sl-case{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.sl-case .sl-case-tag{padding:8px 12px;color:#fff;font-size:11px;font-weight:700;text-align:center}
+.sl-case .sl-case-body{padding:12px}
+.sl-case .sl-case-label{font-size:10px;font-weight:600;margin-bottom:2px}
+.sl-case .sl-case-text{font-size:9px;color:var(--muted);line-height:1.6;margin-bottom:8px;white-space:pre-line}
+.sl-case .sl-case-result{background:rgba(34,197,94,.08);border-radius:6px;padding:8px;font-size:9px;color:var(--green);line-height:1.6;white-space:pre-line}
+.sl-diag-intro{padding:12px;border-radius:8px;margin-bottom:12px;font-size:11px;line-height:1.7}
+.sl-diag-intro .sl-diag-head{font-weight:700;font-size:12px;margin-bottom:4px}
+.sl-stages-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.sl-stage{border-radius:8px;padding:12px;background:var(--surface);border:1px solid var(--border);text-align:center;transition:border .2s}
+.sl-stage.highlight{border-width:2px}
+.sl-stage .sl-stage-bar{height:3px;border-radius:3px 3px 0 0;margin:-12px -12px 10px -12px}
+.sl-stage .sl-stage-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.sl-stage .sl-stage-year{font-size:10px;color:var(--muted);margin-bottom:6px}
+.sl-stage .sl-stage-badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:9px;font-weight:600;color:#fff;margin-bottom:8px}
+.sl-stage .sl-stage-sec{font-size:10px;font-weight:600;margin-bottom:2px}
+.sl-stage .sl-stage-desc{font-size:9px;color:var(--muted);line-height:1.5;white-space:pre-line}
+.sl-talk{padding:12px;border-radius:8px;margin-top:12px;font-size:11px;line-height:1.7}
+.sl-talk .sl-talk-head{font-weight:700;font-size:12px;margin-bottom:6px}
+.sl-talk .sl-talk-sec{font-weight:700;margin-top:6px}
+.sl-talk .sl-talk-line{color:var(--text);opacity:.85}
+
+/* Slide Nav */
+.slide-nav{display:flex;align-items:center;justify-content:center;gap:12px;padding:12px 0 0}
+.slide-nav .nav-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.slide-nav .nav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.slide-nav .nav-btn:disabled{opacity:.3;cursor:default}
+.slide-nav .dots{display:flex;gap:6px}
+.slide-nav .dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}
+.slide-nav .dot.active{transform:scale(1.3)}
+.slide-nav .counter{font-size:11px;color:var(--muted);min-width:40px;text-align:right}
+
 /* Responsive */
 @media(max-width:768px){
   .sidebar{width:100%;min-width:unset;max-height:50vh}
   .app{flex-direction:column}
   .main{padding:16px}
+  .sl-grid.cols-4,.sl-grid.cols-5{grid-template-columns:repeat(2,1fr)}
+  .sl-metrics-row{grid-template-columns:repeat(2,1fr)}
+  .sl-steps{grid-template-columns:repeat(2,1fr)}
+  .sl-pkgs{grid-template-columns:1fr}
+  .sl-cases{grid-template-columns:1fr}
+  .sl-ba{grid-template-columns:1fr}
+  .sl-vals-row{grid-template-columns:1fr}
+  .sl-stages-row{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -307,6 +407,9 @@ function renderDetail(c){
       </div>
     </div>
 
+    <!-- Slide Deck -->
+    <div id="slideDeck"></div>
+
     <!-- Module PV -->
     ${mods.length?`
     <div class="section">
@@ -363,6 +466,7 @@ function renderDetail(c){
   `;
   d.scrollTop=0;
   document.getElementById('mainPanel').scrollTop=0;
+  renderSlideDeck(c);
 }
 
 // Helpers
@@ -375,6 +479,122 @@ function fmtN(n){
   if(Math.abs(n)>=10000)return(n/10000).toFixed(1)+'万';
   return n.toLocaleString('zh-CN',{maximumFractionDigits:0});
 }
+
+// ── Slide Data ─────────────────────────────────────────────
+const PLAN_SLIDES={
+A:{accent:'#7C3AED',accentLight:'rgba(124,58,237,.1)',slides:[
+{type:'stages',title:'您的企业处于数字化转型的哪个阶段？',highlightStage:3,
+ stages:[{name:'信息化阶段',year:'2000-2015',status:'已完成',feature:'流程电子化 (ERP/OA)\n业务线上化管理',focus:'提升基础效率\nIT 部门主导实施'},{name:'数据化阶段',year:'2015-2022',status:'大部分企业在此',feature:'数据驱动业务优化\n全面应用云计算与大数据',focus:'深度挖掘数据价值\nBI 分析工具普及应用'},{name:'智能化阶段',year:'2023-至今',status:'AI 时代目标',feature:'AI 大模型驱动创新\nAgent 智能体自主执行',focus:'全员数据文化\n智能决策自动化落地'}],
+ insight:'麦肯锡研究：具备成熟数字人才体系的企业，数字化转型成功率是普通企业的 3.2 倍',cta:'从"数据驱动"迈向"智能驱动"，不是选择题，而是时间题'},
+{type:'diagnosis',title:'基于贵司使用数据的现状诊断',
+ dynamicIntro:function(c){var l=[];if(c.xiaoQ&&c.xiaoQ.trial)l.push('贵司过去 '+(c.xiaoQ.trialMonths||'若干')+' 个月试用了智能小Q，日均消耗 Token '+(c.xiaoQ.dailyTokens?fmtN(c.xiaoQ.dailyTokens):'—')+'，说明团队已形成 AI 分析习惯。');else if(c.xiaoQ&&c.xiaoQ.purchased)l.push('贵司已采购智能小Q（'+(c.xiaoQ.purchaseDetail||'—')+'），团队已建立 AI 分析工作流程。');else l.push('贵司有接触智能小Q的记录，具备 AI 分析基础。');var ag=c.xiaoQ&&c.xiaoQ.agents||{},op=[],np=[];if(ag.query)op.push('问数');if(ag.report)op.push('报告');if(ag.build)op.push('搭建');['问数','解读','报告','发现','搭建'].forEach(function(a){if(op.indexOf(a)<0)np.push(a)});if(op.length)l.push('已开通 Agent：'+op.join('/')+' ，但 '+np.join('/')+' 尚未开通，能力不完整。');l.push('试用 Token 额度有限，业务分析经常中断——团队有需求但工具跟不上。');return l;},
+ cards:[{title:'AI 使用已形成习惯',desc:'日均 Token 消耗稳定\n说明团队已依赖 AI 分析\n这是最宝贵的数字资产',color:'var(--green)',badge:'优势'},{title:'Agent 能力不完整',desc:'仅开通部分 Agent\n场景覆盖有断层\n无法形成完整工作流',color:'var(--orange)',badge:'缺口'},{title:'试用额度频繁耗尽',desc:'月中 Token 就用完\n业务分析被迫中断\n团队体验严重受损',color:'var(--red)',badge:'风险'},{title:'停用 = 效率倒退',desc:'如果停止使用 AI\n团队将回退到人工模式\n已建立的习惯白白流失',color:'var(--red)',badge:'关键'}],
+ conclusion:'核心结论：贵司已迈入智能化阶段，最大的风险不是"多花钱"，而是"停下来"',conclusionSub:'正式采购 = 保护已建立的效率增量，让 AI 习惯从试用变为标准工作流'},
+{type:'cardGrid',title:'您的 AI 数字员工团队：5 大 Agent 全覆盖',subtitle:'每个 Agent 专注一项核心能力，组合起来覆盖数据分析全链路',columns:5,
+ cards:[{title:'问数 Agent',desc:'自然语言提问\n秒级返回答案\n无需 SQL',result:'替代 IT 取数',resultColor:'#0056D2'},{title:'解读 Agent',desc:'自动解读趋势\n智能归因波动\n一键分析结论',result:'报表会说话',resultColor:'#7C3AED'},{title:'报告 Agent',desc:'自主规划框架\n多维交叉分析\n一键生成报告',result:'2天>2分钟',resultColor:'#FF6B35'},{title:'发现 Agent',desc:'7x24 智能监控\n异常主动推送\n实时预警到人',result:'事后>实时',resultColor:'#00B374'},{title:'搭建 Agent',desc:'自然语言建表\nAI 自动搭建\n零代码零门槛',result:'5天>30分钟',resultColor:'#E1580E'}],
+ footer:'提问取数 >>> 自动解读 >>> 生成报告 >>> 异常预警 >>> 敏捷建表 = 完整 AI 工作流',footnotes:['+ Skill 生态：嵌入钉钉/飞书/企微','+ CLI 管理：命令式管理 BI 平台，批量操作秒级完成']},
+{type:'painTable',title:'您的业务痛点 >>> 对应的 AI 解决方案',headers:['当前痛点','AI 解决方案','预期效果'],
+ rows:[['试用Token不够，分析做一半中断','问数+解读Agent正式版，无限额','分析连续性：碎片试用>日常工作流'],['业务取数依赖IT排期3-7天','问数Skill嵌入钉钉/飞书','IT取数工单减少70%+'],['管理层报告靠人工拼PPT','报告Agent自动生成经营分析','报告制作：2天>20分钟'],['数据异常发现严重滞后','发现Agent主动推送预警','异常响应：事后复盘>实时预警'],['新报表需求积压','搭建Agent自然语言建表','报表交付：3-5天>30分钟'],['BI管理操作多步手动','CLI+Skill消费闭环','管理效率：小时级>秒级']],
+ talkScript:{sections:[{label:'开场（用数据说话）',line:'"贵司过去X个月试用了智能小Q，日均消耗Token XX万，说明团队已建立AI分析的工作习惯。"'},{label:'转化（点明风险）',line:'"但试用Token额度有限，Agent也未完整开通。如果停止，团队将回退到人工模式。"'},{label:'促单（给出方案）',line:'"正式采购=保护已建立的效率增量。我们建议从基础包起步，先锁定核心场景的ROI。"'}]}},
+{type:'cardGrid',title:'Skill+CLI：让 AI 融入日常工作场景',subtitle:'在钉钉/飞书/企微等工作场景中随时调用',columns:4,
+ cards:[{title:'问数 Skill',desc:'在群聊中@小Q提问\n秒级返回答案+图表',scenario:'晨会群、经营日报群',resultColor:'#0056D2'},{title:'解读 Skill',desc:'分享报表链接到群\n小Q自动解读核心变化',scenario:'周报分享、数据复盘',resultColor:'#7C3AED'},{title:'报告 Skill',desc:'一句话触发报告生成\n图文并茂推送到群',scenario:'定时经营报告',resultColor:'#FF6B35'},{title:'CLI 管理',desc:'命令式管理BI平台\n管理效率10x提升',scenario:'权限管理、批量操作',resultColor:'#00B374'}],
+ footer:'核心价值：从"人找系统"到"系统找人"——AI能力主动嵌入每个工作场景'},
+{type:'metrics',title:'您将获得的可量化结果',subtitle:'每一项投入都对应明确的结果承诺——可衡量、可验证、可复盘',
+ metrics:[{name:'分析效率',before:'3-7天',after:'<30分钟',tag:'人工取数>AI秒级响应'},{name:'IT工单量',before:'日均20+',after:'减少70%',tag:'释放IT团队产能'},{name:'经营报告',before:'2天/份',after:'20分钟/份',tag:'管理层每日看到最新分析'},{name:'异常发现',before:'事后复盘',after:'实时推送',tag:'从"救火"到"防火"'}],
+ valueCards:[{title:'数据分析能力',subtitle:'从「专业技能」变为全员「通用能力」',desc:'不再依赖IT和数据团队，每位业务人员都能自然语言提问、获取洞察。'},{title:'BI系统定位',subtitle:'从「查询工具」升级为「智能伙伴」',desc:'BI不再只是被动的"取数平台"，而是主动推送洞察、预警异常的AI伙伴。'},{title:'管理层决策',subtitle:'从「经验驱动」变为「数据驱动」',desc:'经营分析不再等待人工制作，AI自动生成、主动推送。管理层每天第一时间看到最新数据洞察。'}]},
+{type:'landing',title:'落地路径与合作方式',
+ steps:[{num:'01',name:'需求诊断',desc:'深入了解贵司数据分析\n现状与核心痛点',color:'#0056D2'},{num:'02',name:'场景试点',desc:'选1-2个核心场景\n2周内产出效果',color:'#7C3AED'},{num:'03',name:'效果验证',desc:'用真实数据验证ROI\n形成量化报告',color:'#FF6B35'},{num:'04',name:'规模部署',desc:'验证后扩展全部门\n全面释放数据价值',color:'#00B374'}],
+ packages:[{name:'基础包',includes:'问数Agent+解读Agent',desc:'解决取数和归因两大刚需\n业务自助率15%提升到60%+\nIT取数工单减少70%',value:'核心价值：释放IT产能+业务自助',color:'#0056D2'},{name:'进阶包',includes:'+报告Agent+发现Agent+Skill',desc:'增加自动报告和异常预警\n嵌入钉钉/飞书随时随地分析\n管理层每天准时收到经营报告',value:'核心价值：AI全链路+管理层赋能',color:'#7C3AED',recommended:true},{name:'旗舰包',includes:'全量Agent+CLI+Skill生态',desc:'全面AI Native工作流\n搭建Agent敏捷交付新报表\nCLI命令式管理效率10倍提升',value:'核心价值：完整AI Native数字化转型',color:'#00B374'}],
+ pricingNote:'支持按季度/年度灵活采购，首期可从基础包起步验证ROI'},
+{type:'cases',title:'客户成功案例——同行业已验证的价值',
+ cases:[{tag:'全球快消品牌集团',color:'#0056D2',challenge:'1万+数据看板，业务部门高频临时取数需求，传统方式低效、IT不堪重负。',solution:'部署问数+解读Agent\n每个仪表板拥有专属AI分析师\n嵌入钉钉群日常工作流',result:'取数效率10倍+提升\n业务自助率15%>80%\nIT取数工单减少70%'},{tag:'连锁茶饮品牌（3万+门店）',color:'#FF6B35',challenge:'3万+门店运营数据复杂，人工分析制作经营报告需2天以上。',solution:'报告Agent自动生成经营报告\n发现Agent主动推送异常\n管理层每日准时收到核心指标',result:'报告耗时2天>2分钟\n主动发现增长30%的核心驱动\n管理决策从周级到日级'},{tag:'头部互联网公司',color:'#7C3AED',challenge:'数据团队人手紧张，需求积压严重，取数排期5-7天。',solution:'全量Agent部署+Skill嵌入\n业务自助取数+自动报告\nCLI批量管理权限和配置',result:'数据团队产能释放50%+\n业务全员自助率>70%\n管理效率从小时级到秒级'}]}
+]},
+B:{accent:'#0096FF',accentLight:'rgba(0,150,255,.1)',slides:[
+{type:'stages',title:'您的企业处于数字化转型的哪个阶段？',highlightStage:2,
+ stages:[{name:'信息化阶段',year:'2000-2015',status:'已完成',feature:'流程电子化 (ERP/OA)\n业务线上化管理',focus:'提升基础效率\nIT 部门主导实施'},{name:'数据化阶段',year:'2015-2022',status:'大部分企业在此',feature:'数据驱动业务优化\n全面应用云计算与大数据',focus:'深度挖掘数据价值\nBI 分析工具普及应用'},{name:'智能化阶段',year:'2023-至今',status:'AI 时代目标',feature:'AI 大模型驱动创新\nAgent 智能体自主执行',focus:'全员数据文化\n智能决策自动化落地'}],
+ insight:'麦肯锡研究：具备成熟数字人才体系的企业，数字化转型成功率是普通企业的 3.2 倍',cta:'从"数据驱动"迈向"智能驱动"，不是选择题，而是时间题'},
+{type:'diagnosis',title:'基于贵司使用数据的现状诊断',
+ dynamicIntro:function(c){return['贵司已创建 '+(c.reportCount||0)+' 张报表，月均 PV '+fmtN(c.monthlyPV)+'，说明数据基建已非常扎实。','但报表消费率不足30%——大量报表被创建后少有人深度消费，数据资产严重"沉睡"。','目前主要使用仪表板模块，尚未接触AI分析能力，有巨大的提效空间。'];},
+ cards:[{title:'数据基建扎实',desc:'已有大量报表\n数据集完善、口径清晰\n这是AI提效的最佳起点',color:'var(--green)',badge:'优势'},{title:'报表资产沉睡',desc:'消费率不足30%\n业务看数字但看不懂原因\n大量投入没有转化为洞察',color:'var(--orange)',badge:'问题'},{title:'77%时间在制表',desc:'数据团队疲于应付取数制表\n没有精力做深度分析\n高价值工作被低效重复挤占',color:'var(--red)',badge:'瓶颈'},{title:'AI能力零接触',desc:'尚未使用智能小Q\n不了解AI可以做什么\n但竞争对手可能已在部署',color:'#7C3AED',badge:'机会'}],
+ conclusion:'核心结论：贵司已有优质数据资产，AI解读+搭建可以零迁移成本激活沉睡资产',conclusionSub:'投入最小、见效最快——开通即用，第一天就能看到效果'},
+{type:'beforeAfter',title:'小Q解读：让每张报表自己"说人话"',subtitle:'无需新建数据集，直接复用现有报表资产——AI自动理解现有口径',
+ before:{title:'现在：报表只是"数字展示板"',items:['业务打开报表，看到一堆数字，不知道哪些是关键信息','数据波动了，但不知道为什么变化、该怎么应对','需要人工逐个分析、写结论、做PPT，效率极低']},
+ after:{title:'AI后：报表自动输出洞察',items:['AI自动标注关键变化、排名异动、趋势拐点','波动归因自动完成——"上周GMV下降8%，主因华南区客单价降低"','一键生成分析结论，直接用于汇报和决策']},
+ capabilities:[{title:'趋势解读',desc:'自动识别上升/下降趋势\n用业务语言描述变化\n不再只是冰冷数字',color:'#0096FF'},{title:'波动归因',desc:'数据异常波动时自动定位原因\n多维下钻找到根因',color:'#7C3AED'},{title:'对比分析',desc:'同环比自动计算\n分组对比揭示规律\n发现肉眼难以察觉的趋势',color:'#0056D2'}]},
+{type:'cardGrid',title:'小Q搭建+发现：从"等排期"到"说话建表+异常秒知"',subtitle:'',columns:2,
+ cards:[{title:'搭建Agent | 自然语言生成报表',desc:'"帮我做一张各区域销售完成率看板"\n> AI自动选数据集、搭图表、配筛选\n\n"上面加一个同比增长趋势线"\n> 理解上下文，增量修改现有报表',resultColor:'#7C3AED'},{title:'发现Agent | 异常主动推送',desc:'7x24智能监控\n系统全天候监测关键指标\n\n异常主动推送\n发现问题第一时间通知\n\n智能归因\n不只告诉你"有异常"，还分析"为什么"',resultColor:'#00B374'}],
+ extraCards:[{title:'零迁移成本',desc:'无需新建数据集\n复用已有报表资产',color:'#0056D2'},{title:'立竿见影',desc:'开通即可用\n第一天就能看到效果',color:'#0096FF'},{title:'低投入高回报',desc:'搭建效率5-10倍提升\n释放数据团队产能',color:'#00B374'}]},
+{type:'painTable',title:'您的业务痛点 >>> 对应的 AI 解决方案',headers:['当前痛点','AI 解决方案','预期效果'],
+ rows:[['报表做了几百张但没人深度消费','小Q解读——报表自动"说人话"','报表消费率：<30%>60%+'],['新报表需求积压，数据团队疲于制表','小Q搭建——自然语言生成图表','报表交付：3-5天>30分钟'],['业务看到数但看不懂变化原因','小Q解读+波动归因分析','业务自助归因率：0>50%+'],['仪表板只是"展示板"无行动触发','发现Agent主动推送异常','数据消费：人找数>数找人']],
+ talkScript:{sections:[{label:'开场（用数据说话）',line:'"贵司已有大量报表、月PV可观，数据基建非常扎实。但报表消费率不足30%，大量报表是"沉睡资产"。"'},{label:'转化（点明价值）',line:'"AI解读可以零成本激活这些资产：不需要新建数据集，直接复用现有报表，每张报表自动输出业务洞察。"'},{label:'促单（降低门槛）',line:'"开通即用，第一天就能看到效果。建议先从核心报表开始，2周内验证消费率提升效果。"'}]}},
+{type:'metrics',title:'您将获得的可量化结果',subtitle:'每一项投入都对应明确的结果承诺——可衡量、可验证、可复盘',
+ metrics:[{name:'报表消费率',before:'<30%',after:'60%+',tag:'沉睡资产被AI激活'},{name:'报表交付',before:'3-5天',after:'30分钟',tag:'搭建效率10倍提升'},{name:'业务归因率',before:'0%',after:'50%+',tag:'业务人员自助分析归因'},{name:'数据消费模式',before:'人找数',after:'数找人',tag:'AI主动推送异常洞察'}],
+ valueCards:[{title:'报表资产',subtitle:'从「沉睡展示板」变为「洞察引擎」',desc:'已有的数百张报表不再只是"看数字"，AI自动解读趋势、归因波动、标注异常。'},{title:'数据团队',subtitle:'从「疲于制表」变为「深度分析」',desc:'AI搭建承接80%常规报表需求，数据团队终于有精力做高价值的深度分析。'},{title:'数据文化',subtitle:'从「口号」变为「日常习惯」',desc:'当每个人都能看懂报表、自助归因，数据驱动不再是口号，而是全员日常。'}]},
+{type:'landing',title:'落地路径与合作方式',
+ steps:[{num:'01',name:'需求诊断',desc:'深入了解贵司数据分析\n现状与核心痛点',color:'#0056D2'},{num:'02',name:'场景试点',desc:'选1-2个核心场景\n2周内产出效果',color:'#0096FF'},{num:'03',name:'效果验证',desc:'用真实数据验证ROI\n形成量化报告',color:'#FF6B35'},{num:'04',name:'规模部署',desc:'验证后扩展全部门\n全面释放数据价值',color:'#00B374'}],
+ packages:[{name:'解读包',includes:'小Q解读+发现Agent',desc:'现有报表零改造即刻激活\nAI自动解读+异常推送\n开通即见效',value:'核心价值：零成本激活沉睡报表资产',color:'#0096FF'},{name:'全能包',includes:'+搭建Agent+问数Agent',desc:'增加AI建表能力\n业务自然语言自助取数\n数据团队产能释放50%+',value:'核心价值：解读+搭建双轮驱动',color:'#0056D2',recommended:true},{name:'升级包',includes:'+报告Agent+Skill生态',desc:'完整AI分析能力链路\n自动经营报告+嵌入钉钉\n向AI数字员工方案进化',value:'核心价值：从基础提效到全面智能化',color:'#7C3AED'}],
+ pricingNote:'建议从解读包起步，2周验证消费率提升后再扩展'},
+{type:'cases',title:'客户成功案例——同行业已验证的价值',
+ cases:[{tag:'大型医药集团',color:'#00B374',challenge:'100+分析维度，严重依赖数据团队人工搭建分析模型，搭建周期3-7天。',solution:'搭建Agent自然语言建表\n解读Agent自动分析结论\n业务人员自主探索分析',result:'业务人员自主分析从0到1\n搭建效率5-10倍提升\n数据团队释放50%+产能'},{tag:'全国连锁零售企业',color:'#0096FF',challenge:'300+张门店报表，业务只看销售额数字，不理解变化原因。',solution:'小Q解读激活已有报表\n每张报表自动输出趋势分析\n发现Agent推送门店异常',result:'报表消费率25%提升到65%\n门店异常发现提前2天\n业务归因自助率>40%'},{tag:'科技公司（500+员工）',color:'#0056D2',challenge:'数据团队仅3人，报表需求积压40+，业务抱怨取数慢。',solution:'搭建Agent承接常规需求\n问数Agent业务自助取数\n解读Agent自动输出结论',result:'需求积压清零\n业务自助率>60%\n数据团队转向策略支持'}]}
+]},
+C:{accent:'#00B374',accentLight:'rgba(0,179,116,.1)',slides:[
+{type:'stages',title:'您的企业处于数字化转型的哪个阶段？',highlightStage:2,
+ stages:[{name:'信息化阶段',year:'2000-2015',status:'已完成',feature:'流程电子化 (ERP/OA)\n业务线上化管理',focus:'提升基础效率\nIT 部门主导实施'},{name:'数据化阶段',year:'2015-2022',status:'大部分企业在此',feature:'数据驱动业务优化\n全面应用云计算与大数据',focus:'深度挖掘数据价值\nBI 分析工具普及应用'},{name:'智能化阶段',year:'2023-至今',status:'AI 时代目标',feature:'AI 大模型驱动创新\nAgent 智能体自主执行',focus:'全员数据文化\n智能决策自动化落地'}],
+ insight:'麦肯锡研究：具备成熟数字人才体系的企业，数字化转型成功率是普通企业的 3.2 倍',cta:'从"数据驱动"迈向"智能驱动"，不是选择题，而是时间题'},
+{type:'diagnosis',title:'基于贵司使用数据的现状诊断',
+ dynamicIntro:function(c){var l=[];var mods=Object.entries(c.modulePV||{}).sort(function(a,b){return b[1]-a[1]});var modStr=mods.map(function(m){return m[0]+' PV '+fmtN(m[1])}).join('、');l.push('贵司是QuickBI的深度用户：活跃使用 '+(c.moduleCount||0)+' 个模块，月总 PV '+fmtN(c.monthlyPV)+'。');if(modStr)l.push('各模块使用情况：'+modStr+'。');l.push('多模块活跃使用，业务已深度依赖平台。但随着数据量和用户量增长，查询变慢、并发不稳定等性能瓶颈正在影响使用体验。');return l;},
+ cards:[{title:'深度使用依赖强',desc:'3+模块活跃使用\n电子表格/门户/填报/仪表板\n业务已离不开平台',color:'var(--green)',badge:'优势'},{title:'性能遇到瓶颈',desc:'数据量大查询卡顿\n复杂报表加载>30秒\n用户体验严重下降',color:'var(--red)',badge:'瓶颈'},{title:'并发不稳定',desc:'用户量增长后并发激增\n高峰期系统不稳定\n影响业务正常使用',color:'var(--orange)',badge:'风险'},{title:'跨模块分析难',desc:'数据分散在多个模块\n缺少统一的智能分析\n人工拼接低效易错',color:'#7C3AED',badge:'痛点'}],
+ conclusion:'核心结论：贵司的深度使用证明了平台价值，但性能瓶颈正在限制进一步增长',conclusionSub:'Quick引擎+AI 是保障体验、解锁增长天花板的关键投资'},
+{type:'cardGrid',title:'Quick引擎：亿级数据毫秒响应',subtitle:'无需改造现有数据架构——即插即用的高性能计算引擎',columns:4,
+ cards:[{title:'抽取加速',desc:'列式存储技术\n全量/增量灵活同步\n大批量离线数据快速加载',result:'查询30s>0.5s',resultColor:'#0056D2',badge:'E',badgeColor:'#0056D2'},{title:'实时加速',desc:'云端弹性算力\n高吞吐实时流处理\n秒级响应最新数据',result:'实时数据<1秒',resultColor:'#FF6B35',badge:'R',badgeColor:'#FF6B35'},{title:'查询缓存',desc:'高速缓存组件\n智能预聚合加速\n大幅减轻源库压力',result:'源库压力-80%',resultColor:'#7C3AED',badge:'C',badgeColor:'#7C3AED'},{title:'维值加速',desc:'高频列索引优化\n控件渲染提速\n即席分析秒级交互',result:'筛选加载<0.5s',resultColor:'#00B374',badge:'D',badgeColor:'#00B374'}],
+ extraCards:[{title:'电子表格加速',desc:'大数据量电子表格查询从30秒降到0.5秒，60倍性能提升',color:'#00B374'},{title:'并发稳定保障',desc:'高峰期毫秒级稳定响应，用户量翻倍也不影响体验',color:'#00B374'},{title:'源库零压力',desc:'缓存+引擎承载查询，源数据库专注业务写入',color:'#00B374'}],
+ footer:'核心价值：性能投资=增长保障——让业务扩展永远不被技术瓶颈卡住'},
+{type:'cardGrid',title:'AI赋能：让深度使用从"有上限"到"持续进化"',subtitle:'在性能底座之上叠加AI能力，解锁多模块协同分析',columns:3,
+ cards:[{title:'跨模块智能汇总',desc:'痛点：多模块数据分散，人工汇总低效\n\n方案：报告Agent自动整合多源数据\n一键生成跨模块经营分析报告',result:'跨模块分析：人工>AI秒级汇总',resultColor:'#7C3AED'},{title:'电子表格AI提速',desc:'痛点：大数据量操作卡顿\n\n方案：Quick引擎抽取加速+小Q问数\n直接自然语言查询',result:'查询响应：分钟级>秒级',resultColor:'#00B374'},{title:'门户+填报AI增强',desc:'痛点：门户加载慢，填报缺少校验\n\n方案：查询缓存加速门户\n维值加速优化筛选控件',result:'页面加载<1秒 | 填报效率3x',resultColor:'#0096FF'}]},
+{type:'cardGrid',title:'为什么现在是投资性能+AI的最佳时机？',subtitle:'',columns:3,
+ cards:[{title:'用户量在增长',desc:'越来越多的业务人员使用平台\n不加速=体验下降=推广失败',result:'性能是增长的前提',resultColor:'#FF6B35',badge:'1',badgeColor:'#FF6B35'},{title:'AI查询在增加',desc:'AI问数、解读、报告等能力\n会产生大量查询请求',result:'引擎是AI的基础',resultColor:'#7C3AED',badge:'2',badgeColor:'#7C3AED'},{title:'竞争在加速',desc:'行业内AI数据分析已成趋势\n早投入=早建立壁垒',result:'先发优势不可逆',resultColor:'#00B374',badge:'3',badgeColor:'#00B374'}],
+ talkScript:{sections:[{label:'开场（用数据说话）',line:'"贵司是QuickBI的深度用户，多模块活跃，业务已深度依赖平台。"'},{label:'转化（点明瓶颈）',line:'"但随着数据量和用户量增长，查询变慢、并发不稳定会成为瓶颈。Quick引擎+AI是保障体验的关键投资。"'},{label:'促单（量化回报）',line:'"引擎能将查询从30秒降到0.5秒，60倍提速。同时AI帮您跨模块智能分析，释放数据团队产能。"'}]}},
+{type:'metrics',title:'您将获得的可量化结果',subtitle:'每一项投入都对应明确的结果承诺——可衡量、可验证、可复盘',
+ metrics:[{name:'查询性能',before:'5-30秒',after:'<1秒',tag:'Quick引擎60倍加速'},{name:'并发稳定性',before:'高峰卡顿',after:'毫秒级稳定',tag:'弹性扩容保障体验'},{name:'跨模块分析',before:'人工拼接',after:'AI自动汇总',tag:'报告Agent整合多源'},{name:'源库压力',before:'直接查询',after:'减轻80%',tag:'缓存+引擎双重保护'}],
+ valueCards:[{title:'系统性能',subtitle:'从「增长瓶颈」变为「无感体验」',desc:'不管数据量多大、用户量多少，查询永远快、页面永远流畅。'},{title:'深度使用',subtitle:'从「有上限」变为「可无限扩展」',desc:'电子表格、门户、填报等深度使用不再受性能制约。业务想怎么用就怎么用。'},{title:'数据架构',subtitle:'从「被动应对」变为「主动防御」',desc:'Quick引擎在数据源和应用之间建立高性能中间层，面向未来3-5年增长。'}]},
+{type:'landing',title:'落地路径与合作方式',
+ steps:[{num:'01',name:'需求诊断',desc:'深入了解贵司数据分析\n现状与核心痛点',color:'#0056D2'},{num:'02',name:'场景试点',desc:'选1-2个核心场景\n2周内产出效果',color:'#00B374'},{num:'03',name:'效果验证',desc:'用真实数据验证ROI\n形成量化报告',color:'#FF6B35'},{num:'04',name:'规模部署',desc:'验证后扩展全部门\n全面释放数据价值',color:'#00B374'}],
+ packages:[{name:'引擎包',includes:'Quick引擎（抽取+缓存+维值）',desc:'核心性能问题立刻解决\n查询响应从30s降到0.5s\n源库压力减轻80%',value:'核心价值：性能立竿见影',color:'#00B374'},{name:'AI+引擎包',includes:'+报告Agent+解读Agent',desc:'性能提速+AI智能分析\n跨模块数据AI自动汇总\n深度使用体验全面升级',value:'核心价值：性能+智能双保障',color:'#0056D2',recommended:true},{name:'全栈包',includes:'+全量Agent+Skill+CLI',desc:'性能底座+全链路AI能力\n完整AI Native工作流\n面向未来3-5年数字化基座',value:'核心价值：面向未来的全面升级',color:'#7C3AED'}],
+ pricingNote:'建议从引擎包起步，2周验证性能提升后叠加AI能力'},
+{type:'cases',title:'客户成功案例——同行业已验证的价值',
+ cases:[{tag:'大型制造集团（亿级数据）',color:'#00B374',challenge:'生产数据量级大，电子表格和门户查询严重卡顿（30s+），影响一线决策。',solution:'Quick引擎抽取加速\n查询缓存+维值加速\n亿级数据毫秒级响应',result:'查询30s>0.5s (60x提升)\n并发高峰稳定响应\n一线用户满意度大幅提升'},{tag:'连锁茶饮品牌（3万+门店）',color:'#FF6B35',challenge:'3万+门店运营数据，多维度交叉分析复杂，人工报告耗时2天以上。',solution:'引擎加速+报告Agent\n自动整合门店/区域/品类数据\n一键生成经营分析报告',result:'报告耗时2天>2分钟\n跨维度分析自动完成\n管理决策从周级到日级'},{tag:'大型医药集团（100+维度）',color:'#7C3AED',challenge:'100+分析维度组合，复杂查询耗时长，数据团队搭建模型周期3-7天。',solution:'引擎加速复杂查询\n搭建Agent自然语言建表\n业务人员自主探索分析',result:'复杂查询分钟级>秒级\n业务自主分析从0到1\n数据团队释放50%+产能'}]}
+]}
+};
+
+// ── Slide Rendering Engine ─────────────────────────────────
+var curSlideIdx=0,curSlides=null,curAccent='',curCustomer=null;
+function renderSlideDeck(c){
+  var plan=PLAN_SLIDES[c.plan];if(!plan)return;
+  curSlides=plan.slides;curAccent=plan.accent;curSlideIdx=0;curCustomer=c;
+  var deck=document.getElementById('slideDeck');
+  deck.innerHTML='<div class="slide-deck" style="--sl-accent:'+plan.accent+'"><h3><span class="dot" style="background:'+plan.accent+'"></span>方案演示</h3><div class="slide-viewport"><div class="sl-accent-bar" style="background:'+plan.accent+'"></div><div class="sl-inner" id="slideContent"></div></div><div class="slide-nav"><button class="nav-btn" id="slidePrev" onclick="navSlide(-1)">&lsaquo;</button><div class="dots" id="slideDots">'+plan.slides.map(function(_,i){return '<span class="dot'+(i===0?' active':'')+'" style="'+(i===0?'background:'+plan.accent:'')+'" onclick="goSlide('+i+')"></span>'}).join('')+'</div><button class="nav-btn" id="slideNext" onclick="navSlide(1)">&rsaquo;</button><span class="counter" id="slideCounter">1 / '+plan.slides.length+'</span></div></div>';
+  renderSlideAt(0);
+}
+function renderSlideAt(idx){
+  var s=curSlides[idx],el=document.getElementById('slideContent');if(!el||!s)return;
+  el.innerHTML=renderSlide(s,curCustomer);
+  document.querySelectorAll('#slideDots .dot').forEach(function(d,i){d.classList.toggle('active',i===idx);d.style.background=i===idx?curAccent:'';});
+  document.getElementById('slideCounter').textContent=(idx+1)+' / '+curSlides.length;
+  document.getElementById('slidePrev').disabled=idx===0;
+  document.getElementById('slideNext').disabled=idx===curSlides.length-1;
+}
+function navSlide(d){curSlideIdx=Math.max(0,Math.min(curSlides.length-1,curSlideIdx+d));renderSlideAt(curSlideIdx)}
+function goSlide(i){curSlideIdx=i;renderSlideAt(i)}
+function renderSlide(s,c){switch(s.type){case 'stages':return rStages(s);case 'diagnosis':return rDiagnosis(s,c);case 'cardGrid':return rCardGrid(s);case 'painTable':return rPainTable(s);case 'beforeAfter':return rBeforeAfter(s);case 'metrics':return rMetrics(s);case 'landing':return rLanding(s);case 'cases':return rCases(s);default:return '';}}
+function rStages(s){var sc=['#6B7280','#0056D2','#7C3AED'];return '<div class="sl-title">'+esc(s.title)+'</div><div class="sl-stages-row">'+s.stages.map(function(st,i){var hl=i+1===s.highlightStage,co=hl?curAccent:sc[i];return '<div class="sl-stage'+(hl?' highlight':'')+'" style="border-color:'+co+'"><div class="sl-stage-bar" style="background:'+co+'"></div><div class="sl-stage-name" style="color:'+co+'">'+esc(st.name)+'</div><div class="sl-stage-year">'+st.year+'</div><div class="sl-stage-badge" style="background:'+co+'">'+esc(st.status)+'</div><div class="sl-stage-sec" style="color:'+co+'">核心特征</div><div class="sl-stage-desc">'+esc(st.feature)+'</div><div class="sl-stage-sec" style="color:'+co+';margin-top:8px">核心焦点</div><div class="sl-stage-desc">'+esc(st.focus)+'</div></div>';}).join('')+'</div><div class="sl-callout" style="background:'+curAccent+'10;color:var(--text);border:1px solid '+curAccent+'40"><div>'+esc(s.insight)+'</div><div class="sl-callout-sub">'+esc(s.cta)+'</div></div>';}
+function rDiagnosis(s,c){var lines=typeof s.dynamicIntro==='function'?s.dynamicIntro(c):[];return '<div class="sl-title">'+esc(s.title)+'</div><div class="sl-diag-intro" style="background:'+curAccent+'10;border:1px solid '+curAccent+'40"><div class="sl-diag-head" style="color:'+curAccent+'">基于贵司（'+esc(c.name)+'）的实际使用数据</div>'+lines.map(function(l){return '<div>'+esc(l)+'</div>'}).join('')+'</div><div class="sl-grid cols-4">'+s.cards.map(function(cd){return '<div class="sl-card-item"><div class="sl-card-bar" style="background:'+cd.color+'"></div><div><span class="sl-badge" style="background:'+cd.color+'">'+esc(cd.badge)+'</span></div><div class="sl-card-title" style="color:'+cd.color+'">'+esc(cd.title)+'</div><div class="sl-card-desc">'+esc(cd.desc)+'</div></div>'}).join('')+'</div><div class="sl-callout" style="background:'+curAccent+'"><div>'+esc(s.conclusion)+'</div><div class="sl-callout-sub">'+esc(s.conclusionSub)+'</div></div>';}
+function rCardGrid(s){var h='<div class="sl-title">'+esc(s.title)+'</div>';if(s.subtitle)h+='<div class="sl-subtitle">'+esc(s.subtitle)+'</div>';h+='<div class="sl-grid cols-'+(s.columns||3)+'">'+s.cards.map(function(cd){var inner='<div class="sl-card-bar" style="background:'+(cd.resultColor||cd.color||curAccent)+'"></div>';if(cd.badge)inner+='<div><span class="sl-badge" style="background:'+(cd.badgeColor||cd.resultColor||curAccent)+'">'+esc(cd.badge)+'</span></div>';inner+='<div class="sl-card-title" style="color:'+(cd.resultColor||cd.color||curAccent)+'">'+esc(cd.title)+'</div><div class="sl-card-desc">'+esc(cd.desc)+'</div>';if(cd.scenario)inner+='<div style="margin-top:6px;padding:6px;background:var(--bg);border-radius:4px;font-size:9px;color:var(--muted)">'+esc(cd.scenario)+'</div>';if(cd.result)inner+='<div class="sl-card-result" style="background:'+(cd.resultColor||curAccent)+'">'+esc(cd.result)+'</div>';return '<div class="sl-card-item">'+inner+'</div>';}).join('')+'</div>';if(s.extraCards)h+='<div class="sl-grid cols-3" style="margin-top:10px">'+s.extraCards.map(function(cd){return '<div class="sl-card-item"><div class="sl-card-bar" style="background:'+(cd.color||curAccent)+'"></div><div class="sl-card-title" style="color:'+(cd.color||curAccent)+'">'+esc(cd.title)+'</div><div class="sl-card-desc">'+esc(cd.desc)+'</div></div>'}).join('')+'</div>';if(s.footer)h+='<div class="sl-callout" style="background:'+curAccent+'">'+esc(s.footer)+'</div>';if(s.footnotes)s.footnotes.forEach(function(f){h+='<div style="font-size:10px;color:'+curAccent+';font-weight:600;margin-top:4px">'+esc(f)+'</div>'});if(s.talkScript)h+=renderTalkScript(s.talkScript);return h;}
+function rPainTable(s){var h='<div class="sl-title">'+esc(s.title)+'</div><table class="sl-table"><thead><tr>'+s.headers.map(function(hd){return '<th style="background:'+curAccent+'">'+esc(hd)+'</th>'}).join('')+'</tr></thead><tbody>'+s.rows.map(function(r){return '<tr>'+r.map(function(cell,i){return '<td'+(i===2?' style="font-weight:600;color:var(--green)"':'')+'>'+esc(cell)+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table>';if(s.talkScript)h+=renderTalkScript(s.talkScript);return h;}
+function rBeforeAfter(s){return '<div class="sl-title">'+esc(s.title)+'</div><div class="sl-subtitle">'+esc(s.subtitle)+'</div><div class="sl-ba"><div class="sl-ba-box before"><div class="sl-ba-title" style="color:var(--red)">'+esc(s.before.title)+'</div>'+s.before.items.map(function(i){return '<div class="sl-ba-item">x &nbsp;'+esc(i)+'</div>'}).join('')+'</div><div class="sl-ba-box after"><div class="sl-ba-title" style="color:var(--green)">'+esc(s.after.title)+'</div>'+s.after.items.map(function(i){return '<div class="sl-ba-item">&#10003; &nbsp;'+esc(i)+'</div>'}).join('')+'</div></div><div class="sl-grid cols-3">'+s.capabilities.map(function(cap){return '<div class="sl-card-item"><div class="sl-card-bar" style="background:'+cap.color+'"></div><div class="sl-card-title" style="color:'+cap.color+'">'+esc(cap.title)+'</div><div class="sl-card-desc">'+esc(cap.desc)+'</div></div>'}).join('')+'</div><div class="sl-callout" style="background:'+curAccent+'">核心卖点：零迁移成本——现有报表不用改，开通解读能力后每张报表自动拥有AI分析师</div>';}
+function rMetrics(s){return '<div class="sl-title">'+esc(s.title)+'</div><div class="sl-subtitle">'+esc(s.subtitle)+'</div><div class="sl-metrics-row">'+s.metrics.map(function(m){return '<div class="sl-metric"><div class="sl-metric-bar" style="background:'+curAccent+'"></div><div class="sl-metric-name" style="color:'+curAccent+'">'+esc(m.name)+'</div><div class="sl-metric-vals"><span class="sl-bef">'+esc(m.before)+'</span><span class="sl-arr">>></span><span class="sl-aft">'+esc(m.after)+'</span></div><div class="sl-metric-tag">'+esc(m.tag)+'</div></div>'}).join('')+'</div><div style="font-size:13px;font-weight:700;margin-bottom:8px;color:'+curAccent+'">价值重塑</div><div class="sl-vals-row">'+s.valueCards.map(function(v){return '<div class="sl-val-card" style="border-top:3px solid '+curAccent+'"><div class="sl-val-title" style="color:'+curAccent+'">'+esc(v.title)+'</div><div class="sl-val-sub">'+esc(v.subtitle)+'</div><div class="sl-val-desc">'+esc(v.desc)+'</div></div>'}).join('')+'</div>';}
+function rLanding(s){return '<div class="sl-title">'+esc(s.title)+'</div><div class="sl-subtitle">低风险起步 > 快速验证 > 逐步扩展</div><div class="sl-steps">'+s.steps.map(function(st){return '<div class="sl-step" style="border-top:3px solid '+st.color+'"><div class="sl-step-num" style="color:'+st.color+'">'+st.num+'</div><div class="sl-step-name" style="color:'+st.color+'">'+esc(st.name)+'</div><div class="sl-step-desc">'+esc(st.desc)+'</div></div>'}).join('')+'</div><div style="font-size:13px;font-weight:700;margin-bottom:8px;color:'+curAccent+'">推荐方案包（渐进式采购）</div><div class="sl-pkgs">'+s.packages.map(function(p){return '<div class="sl-pkg'+(p.recommended?' recommended':'')+'" style="border-color:'+(p.recommended?curAccent:'var(--border)')+'"><div class="sl-pkg-bar" style="background:'+p.color+'"></div>'+(p.recommended?'<div class="sl-rec-badge">推荐</div>':'')+'<div class="sl-pkg-name" style="color:'+p.color+'">'+esc(p.name)+'</div><div class="sl-pkg-inc">'+esc(p.includes)+'</div><div class="sl-pkg-desc">'+esc(p.desc)+'</div><div class="sl-pkg-val">'+esc(p.value)+'</div></div>'}).join('')+'</div><div class="sl-callout" style="background:'+curAccent+'10;color:var(--text);border:1px solid '+curAccent+'40"><div style="font-weight:700">'+esc(s.pricingNote)+'</div><div class="sl-callout-sub">具体方案与报价将根据贵司实际需求定制</div></div>';}
+function rCases(s){return '<div class="sl-title">'+esc(s.title)+'</div><div class="sl-cases">'+s.cases.map(function(cs){return '<div class="sl-case"><div class="sl-case-tag" style="background:'+cs.color+'">'+esc(cs.tag)+'</div><div class="sl-case-body"><div class="sl-case-label" style="color:var(--red)">核心挑战</div><div class="sl-case-text">'+esc(cs.challenge)+'</div><div class="sl-case-label" style="color:'+curAccent+'">AI 解决方案</div><div class="sl-case-text">'+esc(cs.solution)+'</div><div class="sl-case-result">'+esc(cs.result)+'</div></div></div>'}).join('')+'</div><div class="sl-callout" style="background:'+curAccent+';margin-top:12px">100+ 付费客户 | 18 个细分行业 | Gartner 连续 6 年入选 ABI 魔力象限</div>';}
+function renderTalkScript(ts){return '<div class="sl-talk" style="background:'+curAccent+'10;border:1px solid '+curAccent+'40"><div class="sl-talk-head" style="color:'+curAccent+'">客户沟通话术参考</div>'+ts.sections.map(function(sec){return '<div class="sl-talk-sec" style="color:'+curAccent+'">'+esc(sec.label)+'</div><div class="sl-talk-line">'+esc(sec.line)+'</div>'}).join('')+'</div>';}
 
 function copyPoints(btn){
   const c=allData.customers[selected];

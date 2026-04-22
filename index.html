@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QuickBI 客户增购推荐工具</title>
+<title>增购地图Agent</title>
 <script src="https://cdn.jsdelivr.net/gh/gitbrent/PptxGenJS@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -250,7 +250,7 @@ a{color:var(--accent);text-decoration:none}
   <!-- Sidebar -->
   <div class="sidebar">
     <div class="sidebar-header">
-      <h1>QuickBI 客户增购推荐</h1>
+      <h1>增购地图Agent</h1>
       <div class="sub">输入客户名 → 查看使用数据 → 获取推荐方案</div>
       <div class="search-box">
         <span class="icon">&#128269;</span>
@@ -652,7 +652,7 @@ function pptCover(pptx,c,plan){
   sl.addText(c.name,{x:1,y:3.4,w:PPT.W-2,h:0.7,fontSize:28,fontFace:PPT.FT,bold:true,color:'FFFFFF',align:'center'});
   var sub=[c.industry,c.version,c.department].filter(Boolean).join(' \u00b7 ');
   if(sub)sl.addText(sub,{x:1,y:4.1,w:PPT.W-2,h:0.4,fontSize:13,fontFace:PPT.FT,color:PPT.MT,align:'center'});
-  sl.addText('QuickBI \u5ba2\u6237\u589e\u8d2d\u63a8\u8350',{x:PPT.ML,y:6.9,w:4,h:0.3,fontSize:9,fontFace:PPT.FT,color:PPT.MT});
+  sl.addText('\u589e\u8d2d\u5730\u56feAgent',{x:PPT.ML,y:6.9,w:4,h:0.3,fontSize:9,fontFace:PPT.FT,color:PPT.MT});
   var d=new Date();sl.addText(d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate(),{x:PPT.W-3,y:6.9,w:2.5,h:0.3,fontSize:9,fontFace:PPT.FT,color:PPT.MT,align:'right'});
 }
 function pptClosing(pptx,c,plan){
@@ -664,7 +664,7 @@ function pptClosing(pptx,c,plan){
   sl.addShape('rect',{x:PPT.W/2-1.5,y:3.8,w:3,h:0.03,fill:{color:ac}});
   sl.addText(c.name,{x:1,y:4.1,w:PPT.W-2,h:0.5,fontSize:16,fontFace:PPT.FT,bold:true,color:ac,align:'center'});
   sl.addText('\u65b9\u6848'+c.plan+': '+PPT.PLAN_NAMES[c.plan],{x:1,y:4.6,w:PPT.W-2,h:0.4,fontSize:13,fontFace:PPT.FT,color:'FFFFFF',align:'center'});
-  sl.addText('QuickBI \u00b7 \u963f\u91cc\u4e91',{x:1,y:6.9,w:PPT.W-2,h:0.3,fontSize:9,fontFace:PPT.FT,color:PPT.MT,align:'center'});
+  sl.addText('\u589e\u8d2d\u5730\u56feAgent \u00b7 \u963f\u91cc\u4e91',{x:1,y:6.9,w:PPT.W-2,h:0.3,fontSize:9,fontFace:PPT.FT,color:PPT.MT,align:'center'});
 }
 
 // ── Slide Type Renderers ───────────────────────────────────
@@ -889,7 +889,7 @@ function downloadPPT(customer){
   try{
     var plan=PLAN_SLIDES[customer.plan];if(!plan){alert('\u672a\u627e\u5230\u65b9\u6848\u6570\u636e');return;}
     var pptx=new PptxGenJS();
-    pptx.author='QuickBI \u5ba2\u6237\u589e\u8d2d\u63a8\u8350\u5de5\u5177';
+    pptx.author='\u589e\u8d2d\u5730\u56feAgent';
     pptx.subject=customer.name+' - \u65b9\u6848'+customer.plan;
     pptx.defineLayout({name:'CUSTOM',w:PPT.W,h:PPT.H});
     pptx.layout='CUSTOM';
@@ -907,7 +907,7 @@ function downloadPPT(customer){
       }
     });
     pptClosing(pptx,customer,plan);
-    var fn='QuickBI\u589e\u8d2d\u65b9\u6848_'+customer.name.replace(/[\/\\:*?"<>|]/g,'_')+'_\u65b9\u6848'+customer.plan+'.pptx';
+    var fn='\u589e\u8d2d\u5730\u56fe_'+customer.name.replace(/[\/\\:*?"<>|]/g,'_')+'_\u65b9\u6848'+customer.plan+'.pptx';
     pptx.writeFile({fileName:fn}).then(function(){
       if(btn){btn.classList.remove('generating');btn.classList.add('done');btn.textContent='\u2713 \u5df2\u4e0b\u8f7d';
         setTimeout(function(){btn.classList.remove('done');btn.textContent='\u2b07 \u4e0b\u8f7dPPT';},2500);}

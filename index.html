@@ -407,9 +407,6 @@ function renderDetail(c){
       </div>
     </div>
 
-    <!-- Slide Deck -->
-    <div id="slideDeck"></div>
-
     <!-- Module PV -->
     ${mods.length?`
     <div class="section">
@@ -463,6 +460,9 @@ function renderDetail(c){
       <h3>增购建议理由</h3>
       <p style="font-size:12px;line-height:1.8;color:var(--muted)">${esc(c.priorityReason)}</p>
     </div>`:''}
+
+    <!-- Slide Deck -->
+    <div id="slideDeck"></div>
   `;
   d.scrollTop=0;
   document.getElementById('mainPanel').scrollTop=0;

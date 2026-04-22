@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QuickBI 客户增购推荐工具</title>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/PptxGenJS@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -131,7 +132,12 @@ a{color:var(--accent);text-decoration:none}
 
 /* Slide Deck */
 .slide-deck{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
-.slide-deck h3{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.slide-deck-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.slide-deck-header h3{font-size:14px;font-weight:700;margin-bottom:0;display:flex;align-items:center;gap:8px}
+.ppt-dl-btn{padding:6px 14px;font-size:11px;font-weight:600;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
+.ppt-dl-btn:hover{border-color:var(--sl-accent,var(--accent));color:var(--sl-accent,var(--accent));background:rgba(79,143,247,.08)}
+.ppt-dl-btn.generating{opacity:.6;cursor:wait}
+.ppt-dl-btn.done{border-color:var(--green);color:var(--green)}
 .slide-viewport{border:1px solid var(--border);border-radius:10px;overflow:hidden;position:relative;background:var(--card);min-height:300px}
 .slide-viewport .sl-accent-bar{height:4px;width:100%}
 .sl-inner{padding:24px}
@@ -572,7 +578,7 @@ function renderSlideDeck(c){
   var plan=PLAN_SLIDES[c.plan];if(!plan)return;
   curSlides=plan.slides;curAccent=plan.accent;curSlideIdx=0;curCustomer=c;
   var deck=document.getElementById('slideDeck');
-  deck.innerHTML='<div class="slide-deck" style="--sl-accent:'+plan.accent+'"><h3><span class="dot" style="background:'+plan.accent+'"></span>方案演示</h3><div class="slide-viewport"><div class="sl-accent-bar" style="background:'+plan.accent+'"></div><div class="sl-inner" id="slideContent"></div></div><div class="slide-nav"><button class="nav-btn" id="slidePrev" onclick="navSlide(-1)">&lsaquo;</button><div class="dots" id="slideDots">'+plan.slides.map(function(_,i){return '<span class="dot'+(i===0?' active':'')+'" style="'+(i===0?'background:'+plan.accent:'')+'" onclick="goSlide('+i+')"></span>'}).join('')+'</div><button class="nav-btn" id="slideNext" onclick="navSlide(1)">&rsaquo;</button><span class="counter" id="slideCounter">1 / '+plan.slides.length+'</span></div></div>';
+  deck.innerHTML='<div class="slide-deck" style="--sl-accent:'+plan.accent+'"><div class="slide-deck-header"><h3><span class="dot" style="background:'+plan.accent+'"></span>方案演示</h3><button class="ppt-dl-btn" id="pptDlBtn" onclick="downloadPPT(curCustomer)">&#11015; 下载PPT</button></div><div class="slide-viewport"><div class="sl-accent-bar" style="background:'+plan.accent+'"></div><div class="sl-inner" id="slideContent"></div></div><div class="slide-nav"><button class="nav-btn" id="slidePrev" onclick="navSlide(-1)">&lsaquo;</button><div class="dots" id="slideDots">'+plan.slides.map(function(_,i){return '<span class="dot'+(i===0?' active':'')+'" style="'+(i===0?'background:'+plan.accent:'')+'" onclick="goSlide('+i+')"></span>'}).join('')+'</div><button class="nav-btn" id="slideNext" onclick="navSlide(1)">&rsaquo;</button><span class="counter" id="slideCounter">1 / '+plan.slides.length+'</span></div></div>';
   renderSlideAt(0);
 }
 function renderSlideAt(idx){
@@ -595,6 +601,325 @@ function rMetrics(s){return '<div class="sl-title">'+esc(s.title)+'</div><div cl
 function rLanding(s){return '<div class="sl-title">'+esc(s.title)+'</div><div class="sl-subtitle">低风险起步 > 快速验证 > 逐步扩展</div><div class="sl-steps">'+s.steps.map(function(st){return '<div class="sl-step" style="border-top:3px solid '+st.color+'"><div class="sl-step-num" style="color:'+st.color+'">'+st.num+'</div><div class="sl-step-name" style="color:'+st.color+'">'+esc(st.name)+'</div><div class="sl-step-desc">'+esc(st.desc)+'</div></div>'}).join('')+'</div><div style="font-size:13px;font-weight:700;margin-bottom:8px;color:'+curAccent+'">推荐方案包（渐进式采购）</div><div class="sl-pkgs">'+s.packages.map(function(p){return '<div class="sl-pkg'+(p.recommended?' recommended':'')+'" style="border-color:'+(p.recommended?curAccent:'var(--border)')+'"><div class="sl-pkg-bar" style="background:'+p.color+'"></div>'+(p.recommended?'<div class="sl-rec-badge">推荐</div>':'')+'<div class="sl-pkg-name" style="color:'+p.color+'">'+esc(p.name)+'</div><div class="sl-pkg-inc">'+esc(p.includes)+'</div><div class="sl-pkg-desc">'+esc(p.desc)+'</div><div class="sl-pkg-val">'+esc(p.value)+'</div></div>'}).join('')+'</div><div class="sl-callout" style="background:'+curAccent+'10;color:var(--text);border:1px solid '+curAccent+'40"><div style="font-weight:700">'+esc(s.pricingNote)+'</div><div class="sl-callout-sub">具体方案与报价将根据贵司实际需求定制</div></div>';}
 function rCases(s){return '<div class="sl-title">'+esc(s.title)+'</div><div class="sl-cases">'+s.cases.map(function(cs){return '<div class="sl-case"><div class="sl-case-tag" style="background:'+cs.color+'">'+esc(cs.tag)+'</div><div class="sl-case-body"><div class="sl-case-label" style="color:var(--red)">核心挑战</div><div class="sl-case-text">'+esc(cs.challenge)+'</div><div class="sl-case-label" style="color:'+curAccent+'">AI 解决方案</div><div class="sl-case-text">'+esc(cs.solution)+'</div><div class="sl-case-result">'+esc(cs.result)+'</div></div></div>'}).join('')+'</div><div class="sl-callout" style="background:'+curAccent+';margin-top:12px">100+ 付费客户 | 18 个细分行业 | Gartner 连续 6 年入选 ABI 魔力象限</div>';}
 function renderTalkScript(ts){return '<div class="sl-talk" style="background:'+curAccent+'10;border:1px solid '+curAccent+'40"><div class="sl-talk-head" style="color:'+curAccent+'">客户沟通话术参考</div>'+ts.sections.map(function(sec){return '<div class="sl-talk-sec" style="color:'+curAccent+'">'+esc(sec.label)+'</div><div class="sl-talk-line">'+esc(sec.line)+'</div>'}).join('')+'</div>';}
+
+// ── PPT Generation Module (PptxGenJS) ─────────────────────
+var PPT={BG:'0F1117',SF:'1A1D2E',CD:'222640',BD:'2D3154',TX:'E4E4E7',MT:'9CA3AF',
+  RD:'EF4444',OG:'F59E0B',GN:'22C55E',W:13.33,H:7.5,ML:0.5,MR:0.5,MT2:0.4,
+  FT:'Microsoft YaHei',PLAN_NAMES:{A:'AI\u6570\u5b57\u5458\u5de5',B:'AI\u57fa\u7840\u63d0\u6548',C:'\u6df1\u5ea6\u573a\u666f\u52a0\u901f'}};
+PPT.CW=PPT.W-PPT.ML-PPT.MR;
+
+function pptHex(c){
+  if(!c)return PPT.TX;
+  if(c.indexOf('var(')===0){var m={'var(--green)':PPT.GN,'var(--red)':PPT.RD,'var(--orange)':PPT.OG,'var(--plan-a)':'7C3AED','var(--plan-b)':'0096FF','var(--plan-c)':'00B374','var(--accent)':'4F8FF7','var(--muted)':PPT.MT,'var(--text)':PPT.TX};return m[c]||PPT.TX;}
+  return c.replace('#','');
+}
+function pptNL(s){return s?s.replace(/\\n/g,'\n'):''}
+function pptTitle(sl,t,ac){
+  sl.addShape('rect',{x:0,y:0,w:PPT.W,h:0.06,fill:{color:ac}});
+  sl.addText(t,{x:PPT.ML,y:PPT.MT2,w:PPT.CW,h:0.45,fontSize:18,fontFace:PPT.FT,bold:true,color:PPT.TX});
+}
+function pptSubtitle(sl,t,y){
+  sl.addText(t,{x:PPT.ML,y:y||0.85,w:PPT.CW,h:0.3,fontSize:11,fontFace:PPT.FT,color:PPT.MT});
+}
+function pptCardBox(sl,x,y,w,h,barColor){
+  sl.addShape('roundRect',{x:x,y:y,w:w,h:h,rectRadius:0.08,fill:{color:PPT.CD}});
+  sl.addShape('rect',{x:x,y:y,w:w,h:0.05,fill:{color:barColor||PPT.TX}});
+}
+function pptCallout(sl,text,ac,y,w,isSolid){
+  var x=PPT.ML;w=w||PPT.CW;
+  sl.addShape('roundRect',{x:x,y:y,w:w,h:0.55,rectRadius:0.06,fill:{color:isSolid?ac:PPT.SF},line:isSolid?undefined:{color:ac,width:1}});
+  sl.addText(text,{x:x+0.15,y:y+0.05,w:w-0.3,h:0.45,fontSize:10,fontFace:PPT.FT,bold:true,color:isSolid?'FFFFFF':PPT.TX,valign:'middle'});
+}
+function pptTalk(sl,ts,ac,y){
+  var h=0.3+ts.sections.length*0.5;
+  sl.addShape('roundRect',{x:PPT.ML,y:y,w:PPT.CW,h:h,rectRadius:0.06,fill:{color:PPT.SF},line:{color:ac,width:1}});
+  sl.addText('\u5ba2\u6237\u6c9f\u901a\u8bdd\u672f\u53c2\u8003',{x:PPT.ML+0.15,y:y+0.08,w:PPT.CW-0.3,h:0.22,fontSize:10,fontFace:PPT.FT,bold:true,color:ac});
+  ts.sections.forEach(function(sec,i){
+    var sy=y+0.32+i*0.5;
+    sl.addText(sec.label,{x:PPT.ML+0.15,y:sy,w:2,h:0.2,fontSize:9,fontFace:PPT.FT,bold:true,color:ac});
+    sl.addText(sec.line,{x:PPT.ML+0.15,y:sy+0.18,w:PPT.CW-0.4,h:0.28,fontSize:9,fontFace:PPT.FT,color:PPT.MT,italic:true});
+  });
+  return y+h;
+}
+
+// ── Cover & Closing ────────────────────────────────────────
+function pptCover(pptx,c,plan){
+  var sl=pptx.addSlide();sl.background={color:PPT.BG};
+  var ac=pptHex(plan.accent);
+  sl.addShape('rect',{x:0,y:0,w:PPT.W,h:0.08,fill:{color:ac}});
+  sl.addShape('roundRect',{x:PPT.W/2-2,y:2.6,w:4,h:0.6,rectRadius:0.1,fill:{color:ac}});
+  sl.addText('\u65b9\u6848'+c.plan+': '+PPT.PLAN_NAMES[c.plan],{x:PPT.W/2-2,y:2.6,w:4,h:0.6,fontSize:16,fontFace:PPT.FT,bold:true,color:'FFFFFF',align:'center',valign:'middle'});
+  sl.addText(c.name,{x:1,y:3.4,w:PPT.W-2,h:0.7,fontSize:28,fontFace:PPT.FT,bold:true,color:'FFFFFF',align:'center'});
+  var sub=[c.industry,c.version,c.department].filter(Boolean).join(' \u00b7 ');
+  if(sub)sl.addText(sub,{x:1,y:4.1,w:PPT.W-2,h:0.4,fontSize:13,fontFace:PPT.FT,color:PPT.MT,align:'center'});
+  sl.addText('QuickBI \u5ba2\u6237\u589e\u8d2d\u63a8\u8350',{x:PPT.ML,y:6.9,w:4,h:0.3,fontSize:9,fontFace:PPT.FT,color:PPT.MT});
+  var d=new Date();sl.addText(d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate(),{x:PPT.W-3,y:6.9,w:2.5,h:0.3,fontSize:9,fontFace:PPT.FT,color:PPT.MT,align:'right'});
+}
+function pptClosing(pptx,c,plan){
+  var sl=pptx.addSlide();sl.background={color:PPT.BG};
+  var ac=pptHex(plan.accent);
+  sl.addShape('rect',{x:0,y:0,w:PPT.W,h:0.08,fill:{color:ac}});
+  sl.addText('\u611f\u8c22\u60a8\u7684\u65f6\u95f4',{x:1,y:2.5,w:PPT.W-2,h:0.7,fontSize:26,fontFace:PPT.FT,bold:true,color:'FFFFFF',align:'center'});
+  sl.addText('\u8ba9\u6211\u4eec\u4e00\u8d77\u5f00\u542f\u6570\u636e\u667a\u80fd\u5316\u4e4b\u65c5',{x:1,y:3.2,w:PPT.W-2,h:0.4,fontSize:14,fontFace:PPT.FT,color:PPT.MT,align:'center'});
+  sl.addShape('rect',{x:PPT.W/2-1.5,y:3.8,w:3,h:0.03,fill:{color:ac}});
+  sl.addText(c.name,{x:1,y:4.1,w:PPT.W-2,h:0.5,fontSize:16,fontFace:PPT.FT,bold:true,color:ac,align:'center'});
+  sl.addText('\u65b9\u6848'+c.plan+': '+PPT.PLAN_NAMES[c.plan],{x:1,y:4.6,w:PPT.W-2,h:0.4,fontSize:13,fontFace:PPT.FT,color:'FFFFFF',align:'center'});
+  sl.addText('QuickBI \u00b7 \u963f\u91cc\u4e91',{x:1,y:6.9,w:PPT.W-2,h:0.3,fontSize:9,fontFace:PPT.FT,color:PPT.MT,align:'center'});
+}
+
+// ── Slide Type Renderers ───────────────────────────────────
+function pptStages(pptx,s,c,plan){
+  var sl=pptx.addSlide();sl.background={color:PPT.BG};var ac=pptHex(plan.accent);
+  pptTitle(sl,s.title,ac);
+  var cw=(PPT.CW-0.3)/3,gap=0.15,by=1.1,bh=4.2;
+  var sc=['6B7280','0056D2','7C3AED'];
+  s.stages.forEach(function(st,i){
+    var hl=i+1===s.highlightStage,co=hl?ac:sc[i];
+    var x=PPT.ML+i*(cw+gap);
+    sl.addShape('roundRect',{x:x,y:by,w:cw,h:bh,rectRadius:0.08,fill:{color:PPT.CD},line:{color:co,width:hl?2:0.5}});
+    sl.addShape('rect',{x:x,y:by,w:cw,h:0.06,fill:{color:co}});
+    sl.addText(st.name,{x:x+0.1,y:by+0.15,w:cw-0.2,h:0.3,fontSize:13,fontFace:PPT.FT,bold:true,color:co});
+    sl.addText(st.year,{x:x+0.1,y:by+0.45,w:cw-0.2,h:0.2,fontSize:9,fontFace:PPT.FT,color:PPT.MT});
+    sl.addShape('roundRect',{x:x+0.1,y:by+0.7,w:cw-0.2,h:0.3,rectRadius:0.04,fill:{color:co}});
+    sl.addText(st.status,{x:x+0.1,y:by+0.7,w:cw-0.2,h:0.3,fontSize:9,fontFace:PPT.FT,bold:true,color:'FFFFFF',align:'center',valign:'middle'});
+    sl.addText('\u6838\u5fc3\u7279\u5f81',{x:x+0.1,y:by+1.1,w:cw-0.2,h:0.2,fontSize:9,fontFace:PPT.FT,bold:true,color:co});
+    sl.addText(pptNL(st.feature),{x:x+0.1,y:by+1.3,w:cw-0.2,h:0.6,fontSize:9,fontFace:PPT.FT,color:PPT.MT,lineSpacing:16});
+    sl.addText('\u6838\u5fc3\u7126\u70b9',{x:x+0.1,y:by+2.0,w:cw-0.2,h:0.2,fontSize:9,fontFace:PPT.FT,bold:true,color:co});
+    sl.addText(pptNL(st.focus),{x:x+0.1,y:by+2.2,w:cw-0.2,h:0.6,fontSize:9,fontFace:PPT.FT,color:PPT.MT,lineSpacing:16});
+  });
+  sl.addShape('roundRect',{x:PPT.ML,y:5.5,w:PPT.CW,h:0.8,rectRadius:0.06,fill:{color:PPT.SF},line:{color:ac,width:1}});
+  sl.addText(s.insight,{x:PPT.ML+0.15,y:5.55,w:PPT.CW-0.3,h:0.35,fontSize:10,fontFace:PPT.FT,color:PPT.TX});
+  sl.addText(s.cta,{x:PPT.ML+0.15,y:5.9,w:PPT.CW-0.3,h:0.3,fontSize:9,fontFace:PPT.FT,bold:true,color:ac});
+}
+
+function pptDiagnosis(pptx,s,c,plan){
+  var sl=pptx.addSlide();sl.background={color:PPT.BG};var ac=pptHex(plan.accent);
+  pptTitle(sl,s.title,ac);
+  var lines=typeof s.dynamicIntro==='function'?s.dynamicIntro(c):[];
+  var introH=0.3+lines.length*0.25;
+  sl.addShape('roundRect',{x:PPT.ML,y:1.0,w:PPT.CW,h:introH,rectRadius:0.06,fill:{color:PPT.SF},line:{color:ac,width:1}});
+  sl.addText('\u57fa\u4e8e\u8d35\u53f8\uff08'+c.name+'\uff09\u7684\u5b9e\u9645\u4f7f\u7528\u6570\u636e',{x:PPT.ML+0.15,y:1.05,w:PPT.CW-0.3,h:0.22,fontSize:10,fontFace:PPT.FT,bold:true,color:ac});
+  lines.forEach(function(l,i){
+    sl.addText('\u2022 '+l,{x:PPT.ML+0.15,y:1.3+i*0.25,w:PPT.CW-0.3,h:0.22,fontSize:9,fontFace:PPT.FT,color:PPT.TX});
+  });
+  var cy=1.1+introH+0.15,cw=(PPT.CW-0.45)/4,ch=2.6;
+  s.cards.forEach(function(cd,i){
+    var x=PPT.ML+i*(cw+0.15),co=pptHex(cd.color);
+    pptCardBox(sl,x,cy,cw,ch,co);
+    sl.addShape('roundRect',{x:x+0.08,y:cy+0.15,w:0.6,h:0.22,rectRadius:0.04,fill:{color:co}});
+    sl.addText(cd.badge,{x:x+0.08,y:cy+0.15,w:0.6,h:0.22,fontSize:8,fontFace:PPT.FT,bold:true,color:'FFFFFF',align:'center',valign:'middle'});
+    sl.addText(cd.title,{x:x+0.08,y:cy+0.45,w:cw-0.16,h:0.25,fontSize:11,fontFace:PPT.FT,bold:true,color:co});
+    sl.addText(pptNL(cd.desc),{x:x+0.08,y:cy+0.75,w:cw-0.16,h:ch-1.0,fontSize:9,fontFace:PPT.FT,color:PPT.MT,lineSpacing:16});
+  });
+  var coy=cy+ch+0.15;
+  sl.addShape('roundRect',{x:PPT.ML,y:coy,w:PPT.CW,h:0.7,rectRadius:0.06,fill:{color:ac}});
+  sl.addText(s.conclusion,{x:PPT.ML+0.15,y:coy+0.05,w:PPT.CW-0.3,h:0.35,fontSize:10,fontFace:PPT.FT,bold:true,color:'FFFFFF'});
+  sl.addText(s.conclusionSub,{x:PPT.ML+0.15,y:coy+0.38,w:PPT.CW-0.3,h:0.25,fontSize:9,fontFace:PPT.FT,color:'FFFFFFCC'});
+}
+
+function pptCardGrid(pptx,s,c,plan){
+  var sl=pptx.addSlide();sl.background={color:PPT.BG};var ac=pptHex(plan.accent);
+  pptTitle(sl,s.title,ac);
+  var startY=0.9;
+  if(s.subtitle){pptSubtitle(sl,s.subtitle,0.9);startY=1.15;}
+  var cols=s.columns||3,gap=0.12,cw=(PPT.CW-(cols-1)*gap)/cols;
+  var hasExtra=s.extraCards&&s.extraCards.length,hasFt=s.footer,hasFn=s.footnotes,hasTs=s.talkScript;
+  var ch=hasExtra||hasFt||hasTs?2.5:(cols>=5?3.5:3.2);
+  s.cards.forEach(function(cd,i){
+    var x=PPT.ML+i*(cw+gap),co=pptHex(cd.resultColor||cd.color||plan.accent);
+    pptCardBox(sl,x,startY,cw,ch,co);
+    var ty=startY+0.12;
+    if(cd.badge){
+      sl.addShape('roundRect',{x:x+0.08,y:ty,w:0.5,h:0.2,rectRadius:0.04,fill:{color:pptHex(cd.badgeColor||cd.resultColor||plan.accent)}});
+      sl.addText(cd.badge,{x:x+0.08,y:ty,w:0.5,h:0.2,fontSize:7,fontFace:PPT.FT,bold:true,color:'FFFFFF',align:'center',valign:'middle'});
+      ty+=0.28;
+    }
+    sl.addText(cd.title,{x:x+0.08,y:ty,w:cw-0.16,h:0.25,fontSize:cols>=5?9:11,fontFace:PPT.FT,bold:true,color:co});
+    sl.addText(pptNL(cd.desc),{x:x+0.08,y:ty+0.3,w:cw-0.16,h:ch-1.2,fontSize:cols>=5?7:9,fontFace:PPT.FT,color:PPT.MT,lineSpacing:14});
+    if(cd.result){
+      sl.addShape('roundRect',{x:x+0.06,y:startY+ch-0.35,w:cw-0.12,h:0.28,rectRadius:0.04,fill:{color:co}});
+      sl.addText(cd.result,{x:x+0.06,y:startY+ch-0.35,w:cw-0.12,h:0.28,fontSize:8,fontFace:PPT.FT,bold:true,color:'FFFFFF',align:'center',valign:'middle'});
+    }
+  });
+  var ny=startY+ch+0.12;
+  if(hasExtra){
+    var ew=(PPT.CW-0.24)/3;
+    s.extraCards.forEach(function(cd,i){
+      var x=PPT.ML+i*(ew+0.12),co=pptHex(cd.color||plan.accent);
+      pptCardBox(sl,x,ny,ew,0.8,co);
+      sl.addText(cd.title,{x:x+0.08,y:ny+0.1,w:ew-0.16,h:0.2,fontSize:9,fontFace:PPT.FT,bold:true,color:co});
+      sl.addText(pptNL(cd.desc),{x:x+0.08,y:ny+0.32,w:ew-0.16,h:0.4,fontSize:8,fontFace:PPT.FT,color:PPT.MT});
+    });
+    ny+=0.95;
+  }
+  if(hasFt){pptCallout(sl,s.footer,ac,ny,PPT.CW,true);ny+=0.65;}
+  if(hasFn)s.footnotes.forEach(function(f,i){
+    sl.addText(f,{x:PPT.ML,y:ny+i*0.2,w:PPT.CW,h:0.18,fontSize:8,fontFace:PPT.FT,bold:true,color:ac});
+  });
+  if(hasTs)pptTalk(sl,s.talkScript,ac,ny);
+}
+
+function pptPainTable(pptx,s,c,plan){
+  var sl=pptx.addSlide();sl.background={color:PPT.BG};var ac=pptHex(plan.accent);
+  pptTitle(sl,s.title,ac);
+  var rows=[];
+  rows.push(s.headers.map(function(h){return{text:h,options:{fontSize:10,fontFace:PPT.FT,bold:true,color:'FFFFFF',fill:{color:ac},align:'center',valign:'middle'}};}));
+  s.rows.forEach(function(r,ri){
+    rows.push(r.map(function(cell,ci){return{text:cell,options:{fontSize:9,fontFace:PPT.FT,color:ci===2?PPT.GN:PPT.TX,bold:ci===2,fill:{color:ri%2===0?PPT.CD:PPT.SF},valign:'middle'}};}));
+  });
+  sl.addTable(rows,{x:PPT.ML,y:1.0,w:PPT.CW,colW:[4.0,4.5,3.83],rowH:0.4,border:{type:'solid',color:PPT.BD,pt:0.5}});
+  if(s.talkScript){var ty=1.0+0.4*(s.rows.length+1)+0.2;pptTalk(sl,s.talkScript,ac,ty);}
+}
+
+function pptBeforeAfter(pptx,s,c,plan){
+  var sl=pptx.addSlide();sl.background={color:PPT.BG};var ac=pptHex(plan.accent);
+  pptTitle(sl,s.title,ac);
+  if(s.subtitle)pptSubtitle(sl,s.subtitle);
+  var bw=PPT.CW/2-0.08,by=1.2,bh=2.2;
+  sl.addShape('roundRect',{x:PPT.ML,y:by,w:bw,h:bh,rectRadius:0.08,fill:{color:'1A1215'},line:{color:PPT.RD,width:1}});
+  sl.addText(s.before.title,{x:PPT.ML+0.12,y:by+0.08,w:bw-0.24,h:0.28,fontSize:11,fontFace:PPT.FT,bold:true,color:PPT.RD});
+  s.before.items.forEach(function(it,i){
+    sl.addText('\u2717  '+it,{x:PPT.ML+0.12,y:by+0.42+i*0.35,w:bw-0.24,h:0.3,fontSize:9,fontFace:PPT.FT,color:PPT.MT});
+  });
+  var ax=PPT.ML+bw+0.16;
+  sl.addShape('roundRect',{x:ax,y:by,w:bw,h:bh,rectRadius:0.08,fill:{color:'121A15'},line:{color:PPT.GN,width:1}});
+  sl.addText(s.after.title,{x:ax+0.12,y:by+0.08,w:bw-0.24,h:0.28,fontSize:11,fontFace:PPT.FT,bold:true,color:PPT.GN});
+  s.after.items.forEach(function(it,i){
+    sl.addText('\u2713  '+it,{x:ax+0.12,y:by+0.42+i*0.35,w:bw-0.24,h:0.3,fontSize:9,fontFace:PPT.FT,color:PPT.MT});
+  });
+  var cy=by+bh+0.15,ccw=(PPT.CW-0.24)/3;
+  s.capabilities.forEach(function(cap,i){
+    var x=PPT.ML+i*(ccw+0.12),co=pptHex(cap.color);
+    pptCardBox(sl,x,cy,ccw,1.3,co);
+    sl.addText(cap.title,{x:x+0.08,y:cy+0.12,w:ccw-0.16,h:0.22,fontSize:10,fontFace:PPT.FT,bold:true,color:co});
+    sl.addText(pptNL(cap.desc),{x:x+0.08,y:cy+0.38,w:ccw-0.16,h:0.8,fontSize:8,fontFace:PPT.FT,color:PPT.MT,lineSpacing:14});
+  });
+  pptCallout(sl,'\u6838\u5fc3\u5356\u70b9\uff1a\u96f6\u8fc1\u79fb\u6210\u672c\u2014\u2014\u73b0\u6709\u62a5\u8868\u4e0d\u7528\u6539\uff0c\u5f00\u901a\u89e3\u8bfb\u80fd\u529b\u540e\u6bcf\u5f20\u62a5\u8868\u81ea\u52a8\u62e5\u6709AI\u5206\u6790\u5e08',ac,cy+1.5,PPT.CW,true);
+}
+
+function pptMetrics(pptx,s,c,plan){
+  var sl=pptx.addSlide();sl.background={color:PPT.BG};var ac=pptHex(plan.accent);
+  pptTitle(sl,s.title,ac);
+  if(s.subtitle)pptSubtitle(sl,s.subtitle);
+  var mw=(PPT.CW-0.36)/4,my=1.15,mh=1.5;
+  s.metrics.forEach(function(m,i){
+    var x=PPT.ML+i*(mw+0.12);
+    pptCardBox(sl,x,my,mw,mh,ac);
+    sl.addText(m.name,{x:x+0.06,y:my+0.12,w:mw-0.12,h:0.22,fontSize:11,fontFace:PPT.FT,bold:true,color:ac,align:'center'});
+    sl.addText([{text:m.before,options:{fontSize:14,bold:true,color:PPT.RD}},{text:' >> ',options:{fontSize:10,color:PPT.MT}},{text:m.after,options:{fontSize:14,bold:true,color:PPT.GN}}],{x:x+0.06,y:my+0.45,w:mw-0.12,h:0.35,fontFace:PPT.FT,align:'center',valign:'middle'});
+    sl.addShape('roundRect',{x:x+0.08,y:my+0.9,w:mw-0.16,h:0.35,rectRadius:0.04,fill:{color:PPT.SF}});
+    sl.addText(m.tag,{x:x+0.08,y:my+0.9,w:mw-0.16,h:0.35,fontSize:8,fontFace:PPT.FT,color:PPT.GN,align:'center',valign:'middle'});
+  });
+  var vy=my+mh+0.2;
+  sl.addText('\u4ef7\u503c\u91cd\u5851',{x:PPT.ML,y:vy,w:PPT.CW,h:0.25,fontSize:13,fontFace:PPT.FT,bold:true,color:ac});
+  vy+=0.3;
+  var vw=(PPT.CW-0.24)/3,vh=1.8;
+  s.valueCards.forEach(function(v,i){
+    var x=PPT.ML+i*(vw+0.12);
+    sl.addShape('roundRect',{x:x,y:vy,w:vw,h:vh,rectRadius:0.06,fill:{color:PPT.SF}});
+    sl.addShape('rect',{x:x,y:vy,w:vw,h:0.04,fill:{color:ac}});
+    sl.addText(v.title,{x:x+0.1,y:vy+0.12,w:vw-0.2,h:0.22,fontSize:11,fontFace:PPT.FT,bold:true,color:ac});
+    sl.addText(v.subtitle,{x:x+0.1,y:vy+0.38,w:vw-0.2,h:0.22,fontSize:10,fontFace:PPT.FT,bold:true,color:PPT.TX});
+    sl.addText(v.desc,{x:x+0.1,y:vy+0.65,w:vw-0.2,h:vh-0.8,fontSize:9,fontFace:PPT.FT,color:PPT.MT,lineSpacing:16});
+  });
+}
+
+function pptLanding(pptx,s,c,plan){
+  var sl=pptx.addSlide();sl.background={color:PPT.BG};var ac=pptHex(plan.accent);
+  pptTitle(sl,s.title,ac);
+  pptSubtitle(sl,'\u4f4e\u98ce\u9669\u8d77\u6b65 > \u5feb\u901f\u9a8c\u8bc1 > \u9010\u6b65\u6269\u5c55');
+  var sw=(PPT.CW-0.36)/4,sy=1.15,sh=1.4;
+  s.steps.forEach(function(st,i){
+    var x=PPT.ML+i*(sw+0.12),co=pptHex(st.color);
+    sl.addShape('roundRect',{x:x,y:sy,w:sw,h:sh,rectRadius:0.06,fill:{color:PPT.CD}});
+    sl.addShape('rect',{x:x,y:sy,w:sw,h:0.04,fill:{color:co}});
+    sl.addText(st.num,{x:x+0.08,y:sy+0.12,w:sw-0.16,h:0.3,fontSize:16,fontFace:PPT.FT,bold:true,color:co});
+    sl.addText(st.name,{x:x+0.08,y:sy+0.42,w:sw-0.16,h:0.22,fontSize:11,fontFace:PPT.FT,bold:true,color:co});
+    sl.addText(pptNL(st.desc),{x:x+0.08,y:sy+0.68,w:sw-0.16,h:0.6,fontSize:8,fontFace:PPT.FT,color:PPT.MT,lineSpacing:14});
+  });
+  var py=sy+sh+0.15;
+  sl.addText('\u63a8\u8350\u65b9\u6848\u5305\uff08\u6e10\u8fdb\u5f0f\u91c7\u8d2d\uff09',{x:PPT.ML,y:py,w:PPT.CW,h:0.25,fontSize:12,fontFace:PPT.FT,bold:true,color:ac});
+  py+=0.3;
+  var pw=(PPT.CW-0.24)/3,ph=2.2;
+  s.packages.forEach(function(p,i){
+    var x=PPT.ML+i*(pw+0.12),co=pptHex(p.color);
+    sl.addShape('roundRect',{x:x,y:py,w:pw,h:ph,rectRadius:0.06,fill:{color:PPT.SF},line:p.recommended?{color:ac,width:2}:{color:PPT.BD,width:0.5}});
+    sl.addShape('rect',{x:x,y:py,w:pw,h:0.05,fill:{color:co}});
+    if(p.recommended){
+      sl.addShape('roundRect',{x:x+pw-0.65,y:py+0.08,w:0.55,h:0.22,rectRadius:0.04,fill:{color:PPT.OG}});
+      sl.addText('\u63a8\u8350',{x:x+pw-0.65,y:py+0.08,w:0.55,h:0.22,fontSize:8,fontFace:PPT.FT,bold:true,color:'FFFFFF',align:'center',valign:'middle'});
+    }
+    sl.addText(p.name,{x:x+0.1,y:py+0.12,w:pw-0.8,h:0.25,fontSize:12,fontFace:PPT.FT,bold:true,color:co});
+    sl.addText(p.includes,{x:x+0.1,y:py+0.4,w:pw-0.2,h:0.2,fontSize:9,fontFace:PPT.FT,bold:true,color:PPT.TX});
+    sl.addText(pptNL(p.desc),{x:x+0.1,y:py+0.65,w:pw-0.2,h:1.0,fontSize:8,fontFace:PPT.FT,color:PPT.MT,lineSpacing:14});
+    sl.addShape('roundRect',{x:x+0.08,y:py+ph-0.38,w:pw-0.16,h:0.28,rectRadius:0.04,fill:{color:PPT.CD}});
+    sl.addText(p.value,{x:x+0.08,y:py+ph-0.38,w:pw-0.16,h:0.28,fontSize:8,fontFace:PPT.FT,bold:true,color:PPT.GN,align:'center',valign:'middle'});
+  });
+  var ny=py+ph+0.12;
+  sl.addShape('roundRect',{x:PPT.ML,y:ny,w:PPT.CW,h:0.55,rectRadius:0.06,fill:{color:PPT.SF},line:{color:ac,width:1}});
+  sl.addText(s.pricingNote,{x:PPT.ML+0.12,y:ny+0.03,w:PPT.CW-0.24,h:0.25,fontSize:10,fontFace:PPT.FT,bold:true,color:PPT.TX});
+  sl.addText('\u5177\u4f53\u65b9\u6848\u4e0e\u62a5\u4ef7\u5c06\u6839\u636e\u8d35\u53f8\u5b9e\u9645\u9700\u6c42\u5b9a\u5236',{x:PPT.ML+0.12,y:ny+0.28,w:PPT.CW-0.24,h:0.2,fontSize:9,fontFace:PPT.FT,color:PPT.MT});
+}
+
+function pptCases(pptx,s,c,plan){
+  var sl=pptx.addSlide();sl.background={color:PPT.BG};var ac=pptHex(plan.accent);
+  pptTitle(sl,s.title,ac);
+  var cw=(PPT.CW-0.24)/3,cy=1.0,ch=4.5;
+  s.cases.forEach(function(cs,i){
+    var x=PPT.ML+i*(cw+0.12),co=pptHex(cs.color);
+    sl.addShape('roundRect',{x:x,y:cy,w:cw,h:ch,rectRadius:0.08,fill:{color:PPT.CD}});
+    sl.addShape('roundRect',{x:x,y:cy,w:cw,h:0.4,rectRadius:0.08,fill:{color:co}});
+    sl.addShape('rect',{x:x,y:cy+0.2,w:cw,h:0.2,fill:{color:co}});
+    sl.addText(cs.tag,{x:x+0.1,y:cy+0.05,w:cw-0.2,h:0.3,fontSize:10,fontFace:PPT.FT,bold:true,color:'FFFFFF',valign:'middle'});
+    sl.addText('\u6838\u5fc3\u6311\u6218',{x:x+0.1,y:cy+0.5,w:cw-0.2,h:0.2,fontSize:9,fontFace:PPT.FT,bold:true,color:PPT.RD});
+    sl.addText(pptNL(cs.challenge),{x:x+0.1,y:cy+0.72,w:cw-0.2,h:0.7,fontSize:8,fontFace:PPT.FT,color:PPT.MT,lineSpacing:14});
+    sl.addText('AI \u89e3\u51b3\u65b9\u6848',{x:x+0.1,y:cy+1.45,w:cw-0.2,h:0.2,fontSize:9,fontFace:PPT.FT,bold:true,color:ac});
+    sl.addText(pptNL(cs.solution),{x:x+0.1,y:cy+1.67,w:cw-0.2,h:0.9,fontSize:8,fontFace:PPT.FT,color:PPT.MT,lineSpacing:14});
+    sl.addShape('roundRect',{x:x+0.06,y:cy+ch-1.2,w:cw-0.12,h:1.0,rectRadius:0.06,fill:{color:'0D1A0F'}});
+    sl.addText(pptNL(cs.result),{x:x+0.12,y:cy+ch-1.15,w:cw-0.24,h:0.9,fontSize:9,fontFace:PPT.FT,color:PPT.GN,lineSpacing:16,bold:true});
+  });
+  pptCallout(sl,'100+ \u4ed8\u8d39\u5ba2\u6237 | 18 \u4e2a\u7ec6\u5206\u884c\u4e1a | Gartner \u8fde\u7eed 6 \u5e74\u5165\u9009 ABI \u9b54\u529b\u8c61\u9650',ac,5.7,PPT.CW,true);
+}
+
+// ── Main Download Entry ────────────────────────────────────
+function downloadPPT(customer){
+  if(typeof PptxGenJS==='undefined'){alert('PPT\u5e93\u52a0\u8f7d\u5931\u8d25\uff0c\u8bf7\u5237\u65b0\u9875\u9762\u540e\u91cd\u8bd5');return;}
+  var btn=document.getElementById('pptDlBtn');
+  if(btn){btn.classList.add('generating');btn.textContent='\u2b07 \u751f\u6210\u4e2d...';}
+  try{
+    var plan=PLAN_SLIDES[customer.plan];if(!plan){alert('\u672a\u627e\u5230\u65b9\u6848\u6570\u636e');return;}
+    var pptx=new PptxGenJS();
+    pptx.author='QuickBI \u5ba2\u6237\u589e\u8d2d\u63a8\u8350\u5de5\u5177';
+    pptx.subject=customer.name+' - \u65b9\u6848'+customer.plan;
+    pptx.defineLayout({name:'CUSTOM',w:PPT.W,h:PPT.H});
+    pptx.layout='CUSTOM';
+    pptCover(pptx,customer,plan);
+    plan.slides.forEach(function(s){
+      switch(s.type){
+        case 'stages':pptStages(pptx,s,customer,plan);break;
+        case 'diagnosis':pptDiagnosis(pptx,s,customer,plan);break;
+        case 'cardGrid':pptCardGrid(pptx,s,customer,plan);break;
+        case 'painTable':pptPainTable(pptx,s,customer,plan);break;
+        case 'beforeAfter':pptBeforeAfter(pptx,s,customer,plan);break;
+        case 'metrics':pptMetrics(pptx,s,customer,plan);break;
+        case 'landing':pptLanding(pptx,s,customer,plan);break;
+        case 'cases':pptCases(pptx,s,customer,plan);break;
+      }
+    });
+    pptClosing(pptx,customer,plan);
+    var fn='QuickBI\u589e\u8d2d\u65b9\u6848_'+customer.name.replace(/[\/\\:*?"<>|]/g,'_')+'_\u65b9\u6848'+customer.plan+'.pptx';
+    pptx.writeFile({fileName:fn}).then(function(){
+      if(btn){btn.classList.remove('generating');btn.classList.add('done');btn.textContent='\u2713 \u5df2\u4e0b\u8f7d';
+        setTimeout(function(){btn.classList.remove('done');btn.textContent='\u2b07 \u4e0b\u8f7dPPT';},2500);}
+    }).catch(function(e){
+      alert('\u4e0b\u8f7d\u5931\u8d25: '+e.message);
+      if(btn){btn.classList.remove('generating');btn.textContent='\u2b07 \u4e0b\u8f7dPPT';}
+    });
+  }catch(e){
+    alert('\u751f\u6210\u5931\u8d25: '+e.message);
+    if(btn){btn.classList.remove('generating');btn.textContent='\u2b07 \u4e0b\u8f7dPPT';}
+  }
+}
 
 function copyPoints(btn){
   const c=allData.customers[selected];

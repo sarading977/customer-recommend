@@ -219,6 +219,7 @@ print(f'  Loaded {len(customers)} customers from public cloud file')
 
 # ── A2. Enrich from legacy 261-customer file ─────────────────
 print('Enriching from legacy 261 file...')
+legacy_names = set()          # Track legacy customers for priority assignment
 try:
     df_legacy = pd.read_excel(F_LEGACY, sheet_name='汇总(261家)')
     enriched = 0
@@ -227,6 +228,7 @@ try:
         if name not in customers:
             continue
         c = customers[name]
+        legacy_names.add(name)
         c['scores'] = {
             'usageDepth': safe_num(row.get('使用深度得分'), 0),
             'upsellSpace': safe_num(row.get('增购空间得分'), 0),
@@ -234,9 +236,7 @@ try:
             'salesReach': safe_num(row.get('销售触达得分'), 0),
             'composite': safe_num(row.get('综合得分'), 0),
         }
-        p = safe_str(row.get('增购优先级'))
-        if p:
-            c['priority'] = p
+        c['priority'] = '高优先级'    # Legacy customers are always high priority
         pr = safe_str(row.get('增购建议理由'))
         if pr:
             c['priorityReason'] = pr
@@ -456,6 +456,23 @@ for name, c in customers.items():
     plan_counts[plan] += 1
 
 print(f'  Plan A: {plan_counts["A"]}, Plan B: {plan_counts["B"]}, Plan C: {plan_counts["C"]}')
+
+# ── A7b. Assign priority to non-legacy customers ─────────────
+print('Assigning priority to non-legacy customers...')
+priority_counts = {'高优先级': len(legacy_names), '中优先级': 0, '低优先级': 0}
+for name, c in customers.items():
+    if name in legacy_names:
+        continue   # Already set to 高优先级 in A2
+    is_healthy = c['health'] == '健康'
+    has_pv = c['monthlyPV'] > 0
+    is_plan_ac = c['plan'] in ('A', 'C')
+    if (is_healthy and has_pv) or is_plan_ac:
+        c['priority'] = '中优先级'
+        priority_counts['中优先级'] += 1
+    else:
+        c['priority'] = '低优先级'
+        priority_counts['低优先级'] += 1
+print(f'  Priority distribution: {priority_counts}')
 
 # ── A8. Generate talking points ──────────────────────────────
 print('Generating talking points...')

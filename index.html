@@ -245,6 +245,7 @@ a{color:var(--accent);text-decoration:none}
 .hyb-header .title .sub-info{font-size:12px;color:var(--muted)}
 .hyb-priority{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
 .hyb-priority.high{background:var(--red)}
+.hyb-priority.mid{background:#e09200}
 .hyb-priority.low{background:var(--muted)}
 .mod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .mod-card{padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card);position:relative}
@@ -383,6 +384,9 @@ function buildTypeFilters(){
     [{k:'A',l:'方案A',c:'plan-a'},{k:'B',l:'方案B',c:'plan-b'},{k:'C',l:'方案C',c:'plan-c'}].forEach(function(p){
       html+='<button class="filter-btn '+p.c+'" data-type="plan" data-val="'+p.k+'">'+p.l+'</button>';
     });
+    ['高优先级','中优先级','低优先级'].forEach(function(p){
+      html+='<button class="filter-btn" data-type="priority" data-val="'+p+'">'+p+'</button>';
+    });
     ['健康','观测','高危'].forEach(function(h){
       html+='<button class="filter-btn" data-type="health" data-val="'+h+'">'+h+'</button>';
     });
@@ -415,6 +419,7 @@ function renderList(){
     if(activeFilters.region&&c.region!==activeFilters.region)return false;
     if(cloudType==='public'){
       if(activeFilters.plan&&c.plan!==activeFilters.plan)return false;
+      if(activeFilters.priority&&c.priority!==activeFilters.priority)return false;
       if(activeFilters.health&&c.health!==activeFilters.health)return false;
     }else{
       if(activeFilters.priority&&c.priority!==activeFilters.priority)return false;
@@ -425,9 +430,9 @@ function renderList(){
   document.getElementById('listCount').textContent=filtered.length+' / '+allCustomers.length+' 客户';
   var ul=document.getElementById('customerList');
   if(cloudType==='public'){
-    ul.innerHTML=filtered.map(function(c){return '<div class="customer-item '+(selected===c.name?'selected':'')+'" data-name="'+esc(c.name)+'"><div class="plan-dot '+c.plan+'"></div><div class="info"><div class="name">'+esc(c.name)+'</div><div class="meta"><span>'+(c.industry||'')+'</span><span>PV:'+fmtN(c.monthlyPV)+'</span><span>'+(c.health||'')+'</span></div></div><span class="tag tag-'+c.plan+'">'+c.plan+'</span></div>'}).join('');
+    ul.innerHTML=filtered.map(function(c){var pCls=c.priority==='高优先级'?'tag-A':c.priority==='中优先级'?'tag-C':'tag-B';return '<div class="customer-item '+(selected===c.name?'selected':'')+'" data-name="'+esc(c.name)+'"><div class="plan-dot '+c.plan+'"></div><div class="info"><div class="name">'+esc(c.name)+'</div><div class="meta"><span>'+(c.region||'')+'</span><span>'+c.plan+'</span><span>'+(c.health||'')+'</span></div></div><span class="tag '+pCls+'">'+c.priority+'</span></div>'}).join('');
   }else{
-    ul.innerHTML=filtered.map(function(c){var pCls=c.priority==='高优先级'?'tag-A':'tag-B';return '<div class="customer-item '+(selected===c.name?'selected':'')+'" data-name="'+esc(c.name)+'"><div class="info"><div class="name">'+esc(c.name)+'</div><div class="meta"><span>'+(c.region||'')+'</span><span>'+(c.maintenanceStatus||'')+'</span><span>高潜:'+c.highPotentialCount+'</span></div></div><span class="tag '+pCls+'">'+(c.priority||'')+'</span></div>'}).join('');
+    ul.innerHTML=filtered.map(function(c){var pCls=c.priority==='高优先级'?'tag-A':c.priority==='中优先级'?'tag-C':'tag-B';return '<div class="customer-item '+(selected===c.name?'selected':'')+'" data-name="'+esc(c.name)+'"><div class="info"><div class="name">'+esc(c.name)+'</div><div class="meta"><span>'+(c.region||'')+'</span><span>'+(c.maintenanceStatus||'')+'</span><span>高潜:'+c.highPotentialCount+'</span></div></div><span class="tag '+pCls+'">'+(c.priority||'')+'</span></div>'}).join('');
   }
   ul.querySelectorAll('.customer-item').forEach(function(el){
     el.addEventListener('click',function(){selectCustomer(el.dataset.name)});
@@ -577,7 +582,7 @@ function renderHybridDetail(c){
   document.getElementById('emptyState').style.display='none';
   var d=document.getElementById('detail');
   d.style.display='block';
-  var pClass=c.priority==='高优先级'?'high':'low';
+  var pClass=c.priority==='高优先级'?'high':c.priority==='中优先级'?'mid':'low';
   var highPot=[],purchased=[],trial=[],other=[];
   Object.entries(c.modules).forEach(function(e){
     var nm=e[0],m=e[1];

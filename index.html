@@ -227,6 +227,35 @@ a{color:var(--accent);text-decoration:none}
 .slide-nav .dot.active{transform:scale(1.3)}
 .slide-nav .counter{font-size:11px;color:var(--muted);min-width:40px;text-align:right}
 
+/* Cloud Type Tabs */
+.cloud-tabs{display:flex;gap:4px;margin-top:12px}
+.cloud-tab{flex:1;padding:8px 0;text-align:center;font-size:12px;font-weight:600;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.cloud-tab.active{border-color:var(--accent);color:var(--accent);background:rgba(79,143,247,.1)}
+.cloud-tab .tab-count{font-size:10px;font-weight:400;opacity:.7;margin-left:4px}
+
+/* Region Filters */
+.region-filters{padding:8px 16px;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:5px}
+.region-btn{padding:3px 8px;font-size:10px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.region-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(79,143,247,.1)}
+
+/* Hybrid Detail */
+.hyb-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+.hyb-header .title{flex:1}
+.hyb-header .title h2{font-size:20px;font-weight:700;margin-bottom:4px}
+.hyb-header .title .sub-info{font-size:12px;color:var(--muted)}
+.hyb-priority{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.hyb-priority.high{background:var(--red)}
+.hyb-priority.low{background:var(--muted)}
+.mod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mod-card{padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card);position:relative}
+.mod-card .mod-status-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;color:#fff;display:inline-block;margin-bottom:4px}
+.mod-card .mod-name-text{font-size:12px;font-weight:600}
+.mod-card .mod-amount{font-size:10px;color:var(--muted);margin-top:2px}
+.mod-card.high-potential{border-color:var(--orange);background:rgba(245,158,11,.05)}
+.mod-card.purchased{border-color:var(--green);background:rgba(34,197,94,.05)}
+.mod-group-title{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.mod-group-title .cnt{font-size:10px;padding:2px 8px;border-radius:10px;color:#fff}
+
 /* Responsive */
 @media(max-width:768px){
   .sidebar{width:100%;min-width:unset;max-height:50vh}
@@ -252,11 +281,16 @@ a{color:var(--accent);text-decoration:none}
     <div class="sidebar-header">
       <h1>增购地图Agent</h1>
       <div class="sub">输入客户名 → 查看使用数据 → 获取推荐方案</div>
+      <div class="cloud-tabs" id="cloudTabs">
+        <button class="cloud-tab active" data-type="public" onclick="switchCloudType('public')">公共云<span class="tab-count" id="pubCount"></span></button>
+        <button class="cloud-tab" data-type="hybrid" onclick="switchCloudType('hybrid')">混合云<span class="tab-count" id="hybCount"></span></button>
+      </div>
       <div class="search-box">
         <span class="icon">&#128269;</span>
         <input type="text" id="searchInput" placeholder="搜索客户名称...">
       </div>
     </div>
+    <div class="region-filters" id="regionFilters"></div>
     <div class="filters" id="filters"></div>
     <div class="list-count" id="listCount"></div>
     <div class="customer-list" id="customerList"></div>
@@ -272,41 +306,101 @@ a{color:var(--accent);text-decoration:none}
 </div>
 
 <script>
-// Init - load data on page load
-loadData();
+// State
+var cloudType='public';
+var pubData=null,hybData=null;
+var allCustomers=[],selected=null;
+var activeFilters={plan:null,priority:null,health:null,region:null,maintenance:null};
 
-// Data
-let allData=null, allCustomers=[], selected=null, activeFilters={plan:null,priority:null,health:null};
+loadData();
 
 async function loadData(){
   try{
-    const r=await fetch('./data/customers.json');
-    allData=await r.json();
-    allCustomers=Object.values(allData.customers).sort((a,b)=>(b.scores?.composite||0)-(a.scores?.composite||0));
-    buildFilters();
+    var r=await fetch('./data/public.json');
+    pubData=await r.json();
+    allCustomers=Object.values(pubData.customers).sort(function(a,b){return(b.scores&&b.scores.composite||0)-(a.scores&&a.scores.composite||0)});
+    document.getElementById('pubCount').textContent='('+pubData.totalCustomers+')';
+    try{var mr=await fetch('./data/meta.json');var meta=await mr.json();document.getElementById('hybCount').textContent='('+meta.hybridCloud.totalCustomers+')';}catch(e){}
+    buildRegionFilters();
+    buildTypeFilters();
     renderList();
   }catch(e){
-    document.getElementById('mainPanel').innerHTML='<div class="empty-state"><p>数据加载失败，请确认 data/customers.json 存在</p></div>';
+    document.getElementById('mainPanel').innerHTML='<div class="empty-state"><p>数据加载失败，请确认 data/public.json 存在</p></div>';
   }
 }
 
-// Filters
-function buildFilters(){
-  const fc=document.getElementById('filters');
-  const plans=[{k:'A',l:'方案A',c:'plan-a'},{k:'B',l:'方案B',c:'plan-b'},{k:'C',l:'方案C',c:'plan-c'}];
-  const health=['健康','观测','高危'];
-  const priorities=['高优先级','中优先级','低优先级','观察'];
-  let html='';
-  plans.forEach(p=>{html+=`<button class="filter-btn ${p.c}" data-type="plan" data-val="${p.k}">${p.l}</button>`});
-  health.forEach(h=>{html+=`<button class="filter-btn" data-type="health" data-val="${h}">${h}</button>`});
-  priorities.forEach(p=>{html+=`<button class="filter-btn" data-type="priority" data-val="${p}">${p}</button>`});
+async function loadHybridData(){
+  if(hybData)return hybData;
+  var r=await fetch('./data/hybrid.json');
+  hybData=await r.json();
+  document.getElementById('hybCount').textContent='('+hybData.totalCustomers+')';
+  return hybData;
+}
+
+function switchCloudType(type){
+  if(type===cloudType)return;
+  cloudType=type;
+  selected=null;
+  activeFilters={plan:null,priority:null,health:null,region:null,maintenance:null};
+  document.querySelectorAll('.cloud-tab').forEach(function(t){t.classList.toggle('active',t.dataset.type===type)});
+  document.getElementById('detail').style.display='none';
+  document.getElementById('emptyState').style.display='';
+  if(type==='hybrid'){
+    loadHybridData().then(function(){
+      allCustomers=Object.values(hybData.customers);
+      buildRegionFilters();
+      buildTypeFilters();
+      renderList();
+    });
+  }else{
+    allCustomers=Object.values(pubData.customers).sort(function(a,b){return(b.scores&&b.scores.composite||0)-(a.scores&&a.scores.composite||0)});
+    buildRegionFilters();
+    buildTypeFilters();
+    renderList();
+  }
+}
+
+function buildRegionFilters(){
+  var rf=document.getElementById('regionFilters');
+  var regions=cloudType==='public'?(pubData.filters.regions||[]):(hybData.filters.regions||[]);
+  var html='<button class="region-btn active" data-val="">全部</button>';
+  regions.forEach(function(r){html+='<button class="region-btn" data-val="'+esc(r)+'">'+esc(r)+'</button>'});
+  rf.innerHTML=html;
+  rf.querySelectorAll('.region-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      rf.querySelectorAll('.region-btn').forEach(function(b){b.classList.remove('active')});
+      btn.classList.add('active');
+      activeFilters.region=btn.dataset.val||null;
+      renderList();
+    });
+  });
+}
+
+function buildTypeFilters(){
+  var fc=document.getElementById('filters');
+  var html='';
+  if(cloudType==='public'){
+    [{k:'A',l:'方案A',c:'plan-a'},{k:'B',l:'方案B',c:'plan-b'},{k:'C',l:'方案C',c:'plan-c'}].forEach(function(p){
+      html+='<button class="filter-btn '+p.c+'" data-type="plan" data-val="'+p.k+'">'+p.l+'</button>';
+    });
+    ['健康','观测','高危'].forEach(function(h){
+      html+='<button class="filter-btn" data-type="health" data-val="'+h+'">'+h+'</button>';
+    });
+  }else{
+    (hybData.filters.priorities||[]).forEach(function(p){
+      html+='<button class="filter-btn" data-type="priority" data-val="'+p+'">'+p+'</button>';
+    });
+    (hybData.filters.maintenanceStatus||[]).forEach(function(m){
+      html+='<button class="filter-btn" data-type="maintenance" data-val="'+m+'">'+m+'</button>';
+    });
+  }
   fc.innerHTML=html;
-  fc.querySelectorAll('.filter-btn').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const t=btn.dataset.type,v=btn.dataset.val;
+  fc.querySelectorAll('.filter-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var t=btn.dataset.type,v=btn.dataset.val;
       if(activeFilters[t]===v){activeFilters[t]=null;btn.classList.remove('active')}
       else{
-        fc.querySelectorAll(`[data-type="${t}"]`).forEach(b=>b.classList.remove('active'));
+        fc.querySelectorAll('[data-type="'+t+'"]').forEach(function(b){b.classList.remove('active')});
         activeFilters[t]=v;btn.classList.add('active');
       }
       renderList();
@@ -314,39 +408,43 @@ function buildFilters(){
   });
 }
 
-// List
 function renderList(){
-  const q=(document.getElementById('searchInput').value||'').toLowerCase();
-  let filtered=allCustomers.filter(c=>{
+  var q=(document.getElementById('searchInput').value||'').toLowerCase();
+  var filtered=allCustomers.filter(function(c){
     if(q&&!c.name.toLowerCase().includes(q))return false;
-    if(activeFilters.plan&&c.plan!==activeFilters.plan)return false;
-    if(activeFilters.priority&&c.priority!==activeFilters.priority)return false;
-    if(activeFilters.health&&c.health!==activeFilters.health)return false;
+    if(activeFilters.region&&c.region!==activeFilters.region)return false;
+    if(cloudType==='public'){
+      if(activeFilters.plan&&c.plan!==activeFilters.plan)return false;
+      if(activeFilters.health&&c.health!==activeFilters.health)return false;
+    }else{
+      if(activeFilters.priority&&c.priority!==activeFilters.priority)return false;
+      if(activeFilters.maintenance&&c.maintenanceStatus!==activeFilters.maintenance)return false;
+    }
     return true;
   });
-  document.getElementById('listCount').textContent=`${filtered.length} / ${allCustomers.length} 客户`;
-  const ul=document.getElementById('customerList');
-  ul.innerHTML=filtered.map(c=>`
-    <div class="customer-item ${selected===c.name?'selected':''}" data-name="${esc(c.name)}">
-      <div class="plan-dot ${c.plan}"></div>
-      <div class="info">
-        <div class="name">${esc(c.name)}</div>
-        <div class="meta"><span>${c.industry||''}</span><span>PV:${fmtN(c.monthlyPV)}</span><span>${c.health||''}</span></div>
-      </div>
-      <span class="tag tag-${c.plan}">${c.plan}</span>
-    </div>`).join('');
-  ul.querySelectorAll('.customer-item').forEach(el=>{
-    el.addEventListener('click',()=>selectCustomer(el.dataset.name));
+  document.getElementById('listCount').textContent=filtered.length+' / '+allCustomers.length+' 客户';
+  var ul=document.getElementById('customerList');
+  if(cloudType==='public'){
+    ul.innerHTML=filtered.map(function(c){return '<div class="customer-item '+(selected===c.name?'selected':'')+'" data-name="'+esc(c.name)+'"><div class="plan-dot '+c.plan+'"></div><div class="info"><div class="name">'+esc(c.name)+'</div><div class="meta"><span>'+(c.industry||'')+'</span><span>PV:'+fmtN(c.monthlyPV)+'</span><span>'+(c.health||'')+'</span></div></div><span class="tag tag-'+c.plan+'">'+c.plan+'</span></div>'}).join('');
+  }else{
+    ul.innerHTML=filtered.map(function(c){var pCls=c.priority==='高优先级'?'tag-A':'tag-B';return '<div class="customer-item '+(selected===c.name?'selected':'')+'" data-name="'+esc(c.name)+'"><div class="info"><div class="name">'+esc(c.name)+'</div><div class="meta"><span>'+(c.region||'')+'</span><span>'+(c.maintenanceStatus||'')+'</span><span>高潜:'+c.highPotentialCount+'</span></div></div><span class="tag '+pCls+'">'+(c.priority||'')+'</span></div>'}).join('');
+  }
+  ul.querySelectorAll('.customer-item').forEach(function(el){
+    el.addEventListener('click',function(){selectCustomer(el.dataset.name)});
   });
 }
 document.getElementById('searchInput').addEventListener('input',renderList);
 
 function selectCustomer(name){
   selected=name;
-  const c=allData.customers[name];
-  if(!c)return;
   renderList();
-  renderDetail(c);
+  if(cloudType==='public'){
+    var c=pubData.customers[name];
+    if(c)renderDetail(c);
+  }else{
+    var c=hybData.customers[name];
+    if(c)renderHybridDetail(c);
+  }
 }
 
 // Detail
@@ -473,6 +571,42 @@ function renderDetail(c){
   d.scrollTop=0;
   document.getElementById('mainPanel').scrollTop=0;
   renderSlideDeck(c);
+}
+
+function renderHybridDetail(c){
+  document.getElementById('emptyState').style.display='none';
+  var d=document.getElementById('detail');
+  d.style.display='block';
+  var pClass=c.priority==='高优先级'?'high':'low';
+  var highPot=[],purchased=[],trial=[],other=[];
+  Object.entries(c.modules).forEach(function(e){
+    var nm=e[0],m=e[1];
+    if(!m.status)return;
+    if(m.status.indexOf('高潜')>=0)highPot.push({n:nm,s:m.status,a:m.amount});
+    else if(m.status.indexOf('已购')>=0)purchased.push({n:nm,s:m.status,a:m.amount});
+    else if(m.status.indexOf('试用')>=0)trial.push({n:nm,s:m.status,a:m.amount});
+    else if(m.status!=='未购买')other.push({n:nm,s:m.status,a:m.amount});
+  });
+  function mc(mods,color){
+    var cls=color==='orange'?'high-potential':color==='green'?'purchased':'';
+    return mods.map(function(m){return '<div class="mod-card '+cls+'"><span class="mod-status-badge" style="background:var(--'+color+')">'+esc(m.s)+'</span><div class="mod-name-text">'+esc(m.n)+'</div>'+(m.a?'<div class="mod-amount">\u00a5'+fmtN(m.a)+'</div>':'')+'</div>'}).join('');
+  }
+  d.innerHTML='<div class="hyb-header"><span class="hyb-priority '+pClass+'">'+esc(c.priority||'\u672a\u6807\u6ce8')+'</span><div class="title"><h2>'+esc(c.name)+'</h2><div class="sub-info">'+(c.region||'')+' \u00b7 '+(c.department||'')+' \u00b7 '+(c.version||'')+'</div></div></div>'
+    +'<div class="pills">'
+    +'<div class="pill"><div class="label">\u7ef4\u4fdd\u72b6\u6001</div><div class="value">'+(c.maintenanceStatus||'\u6682\u65e0')+'</div></div>'
+    +'<div class="pill"><div class="label">\u7248\u672c</div><div class="value">'+(c.version||'\u6682\u65e0')+'</div></div>'
+    +'<div class="pill"><div class="label">\u90e8\u7f72\u65b9\u5f0f</div><div class="value">'+(c.deployment||'\u6682\u65e0')+'</div></div>'
+    +'<div class="pill"><div class="label">\u8ba2\u9605\u65b9\u5f0f</div><div class="value">'+(c.subscription||'\u6682\u65e0')+'</div></div>'
+    +'<div class="pill"><div class="label">\u4e3b\u529f\u80fdBI</div><div class="value">\u00a5'+fmtN(c.mainBIAmount)+'</div></div>'
+    +'<div class="pill"><div class="label">\u9ad8\u6f5c\u6a21\u5757\u6570</div><div class="value" style="color:var(--orange)">'+c.highPotentialCount+'</div></div>'
+    +'</div>'
+    +(highPot.length?'<div class="section"><div class="mod-group-title"><span class="cnt" style="background:var(--orange)">'+highPot.length+'</span>\u9ad8\u6f5c\u589e\u8d2d\u6a21\u5757</div><div class="mod-grid">'+mc(highPot,'orange')+'</div></div>':'')
+    +(purchased.length?'<div class="section"><div class="mod-group-title"><span class="cnt" style="background:var(--green)">'+purchased.length+'</span>\u5df2\u8d2d\u4e70\u6a21\u5757</div><div class="mod-grid">'+mc(purchased,'green')+'</div></div>':'')
+    +(trial.length?'<div class="section"><div class="mod-group-title"><span class="cnt" style="background:var(--accent)">'+trial.length+'</span>\u8bd5\u7528\u4e2d\u6a21\u5757</div><div class="mod-grid">'+mc(trial,'accent')+'</div></div>':'')
+    +(other.length?'<div class="section"><div class="mod-group-title"><span class="cnt" style="background:var(--muted)">'+other.length+'</span>\u5176\u4ed6\u6a21\u5757</div><div class="mod-grid">'+mc(other,'muted')+'</div></div>':'')
+    +'<button class="copy-btn" onclick="copyHybridSummary(this)">\u590d\u5236\u589e\u8d2d\u6458\u8981</button>';
+  d.scrollTop=0;
+  document.getElementById('mainPanel').scrollTop=0;
 }
 
 // Helpers
@@ -922,15 +1056,32 @@ function downloadPPT(customer){
 }
 
 function copyPoints(btn){
-  const c=allData.customers[selected];
+  var c=pubData.customers[selected];
   if(!c)return;
-  const planNames={A:'AI数字员工',B:'AI基础提效',C:'深度场景加速'};
-  let text=`【${c.name}】推荐方案${c.plan}: ${planNames[c.plan]}\n\n`;
-  text+=`推荐理由: ${c.planReason}\n\n沟通要点:\n`;
-  (c.talkingPoints||[]).forEach((t,i)=>{text+=`${i+1}. ${t}\n\n`});
-  navigator.clipboard.writeText(text).then(()=>{
+  var planNames={A:'AI数字员工',B:'AI基础提效',C:'深度场景加速'};
+  var text='【'+c.name+'】推荐方案'+c.plan+': '+planNames[c.plan]+'\n\n';
+  text+='推荐理由: '+c.planReason+'\n\n沟通要点:\n';
+  (c.talkingPoints||[]).forEach(function(t,i){text+=(i+1)+'. '+t+'\n\n'});
+  navigator.clipboard.writeText(text).then(function(){
     btn.textContent='已复制!';btn.classList.add('copied');
-    setTimeout(()=>{btn.textContent='复制沟通要点';btn.classList.remove('copied')},2000);
+    setTimeout(function(){btn.textContent='复制沟通要点';btn.classList.remove('copied')},2000);
+  });
+}
+
+function copyHybridSummary(btn){
+  var c=hybData.customers[selected];
+  if(!c)return;
+  var text='【'+c.name+'】混合云增购摘要\n';
+  text+='大区: '+c.region+' | 优先级: '+(c.priority||'未标注')+' | 维保: '+(c.maintenanceStatus||'')+'\n';
+  text+='版本: '+(c.version||'')+' | 部署: '+(c.deployment||'')+' | 高潜模块: '+c.highPotentialCount+'个\n\n';
+  var hp=[];
+  Object.entries(c.modules).forEach(function(e){
+    if(e[1].status&&e[1].status.indexOf('高潜')>=0)hp.push(e[0]+(e[1].amount?' (¥'+Math.round(e[1].amount)+')':''));
+  });
+  if(hp.length)text+='高潜增购模块 ('+hp.length+'个):\n'+hp.map(function(m,i){return(i+1)+'. '+m}).join('\n')+'\n';
+  navigator.clipboard.writeText(text).then(function(){
+    btn.textContent='已复制!';btn.classList.add('copied');
+    setTimeout(function(){btn.textContent='复制增购摘要';btn.classList.remove('copied')},2000);
   });
 }
 </script>
